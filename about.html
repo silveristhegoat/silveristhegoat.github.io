@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>About - Rafael Developer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const links = document.querySelectorAll('a');
+        links.forEach(link => {
+          if (link.hostname === location.hostname) {
+            link.addEventListener('click', function(e) {
+              const href = this.getAttribute('href');
+              if (!href || href.startsWith('#')) return;
+              e.preventDefault();
+              document.body.classList.add('fade-out');
+              setTimeout(() => { window.location = href; }, 400);
+            });
+          }
+        });
+      });
+    </script>
+</head>
+<body>
+
+<header>
+    <nav class="nav">
+        <div class="brand">Digikangelane</div>
+        <ul class="menu">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html" class="active">About</a></li>
+            <li><a href="skills.html">Skills</a></li>
+            <li><a href="works.html">Works</a></li>
+        </ul>
+        <a class="cta" href="index.html">Home</a>
+    </nav>
+</header>
+
+<main>
+    <section class="hero" style="grid-template-columns: 1fr; margin-bottom: 120px;">
+        <div>
+            <h1 class="title">About Me</h1>
+
+            <div style="margin-top:40px; max-width:700px; line-height:1.8; color: var(--text);">
+                <p style="font-size: 1.05rem;">
+                    Hi! My name is <span style="color: var(--accent2); font-weight: 700;">Rafael</span>, and I'm a passionate web developer and designer. I create beautiful, functional, and fast interfaces that users love to interact with.
+                </p>
+
+                <p>
+                    My journey in web development started with a simple passion for coding and design. Over time, I've developed deep expertise in HTML5, CSS3, and JavaScript, as well as mastered design tools like Figma and Adobe Creative Suite.
+                </p>
+
+                <p>
+                    What I love most:
+                </p>
+
+                <ul style="padding-left: 20px;">
+                    <li>💻 Writing clean, semantic HTML code</li>
+                    <li>🎨 Creating impressive CSS animations and effects</li>
+                    <li>✨ Designing user interfaces that delight</li>
+                    <li>⚡ Optimizing performance and accessibility</li>
+                    <li>🚀 Bringing ideas to life through functional prototypes</li>
+                </ul>
+
+                <h3 style="color: var(--accent); margin-top: 40px;">Why Choose Me?</h3>
+                <ul style="padding-left: 20px;">
+                    <li><strong>Attention to detail</strong> — every pixel matters</li>
+                    <li><strong>Original approach</strong> — not just following trends</li>
+                    <li><strong>Quick learner</strong> — always ready to learn new technologies</li>
+                    <li><strong>Great communicator</strong> — love collaborating in teams</li>
+                </ul>
+
+                <p style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #1e5b45;">
+                    When I'm not working on projects, I'm exploring new technologies, experimenting with design, and contributing to the developer community. Let's build something amazing together! 🚀
+                </p>
+
+                <div style="margin-top: 40px; display: flex; gap: 12px;">
+                    <a class="cta" href="works.html">View my work</a>
+                    <a class="ghost" href="contact.html">Get in touch</a>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+        © 2026 Rafael Developer — Made with ❤️ and CSS
+
+</body>
+</html>

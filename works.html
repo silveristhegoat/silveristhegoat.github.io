@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Works - Rafael Developer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const links = document.querySelectorAll('a');
+        links.forEach(link => {
+          if (link.hostname === location.hostname) {
+            link.addEventListener('click', function(e) {
+              const href = this.getAttribute('href');
+              if (!href || href.startsWith('#')) return;
+              e.preventDefault();
+              document.body.classList.add('fade-out');
+              setTimeout(() => { window.location = href; }, 400);
+            });
+          }
+        });
+      });
+    </script>
+</head>
+<body>
+
+<header>
+    <nav class="nav">
+        <div class="brand">Digikangelane</div>
+        <ul class="menu">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="skills.html">Skills</a></li>
+            <li><a href="works.html" class="active">Works</a></li>
+        </ul>
+        <a class="cta" href="contact.html">Contact</a>
+    </nav>
+</header>
+
+<main>
+    <section class="hero" style="grid-template-columns: 1fr; margin-bottom: 60px;">
+        <div>
+            <h1 class="title">My Projects</h1>
+            <p class="subtitle">Here's my portfolio of work — from design to implementation</p>
+        </div>
+    </section>
+
+    <section class="cards" id="projects">
+        <article class="project-card">
+            <div class="project-image">
+                <div class="placeholder-img">💰</div>
+            </div>
+            <div class="project-content">
+                <h3>Financial Budgeting App</h3>
+                <p class="project-desc">A modern mobile application for financial management with an intuitive interface, expense charts and analytics</p>
+                <div class="project-meta">
+                    <span class="meta-item">📱 Mobile</span>
+                    <span class="meta-item">🎨 UI/UX Design</span>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-tag">Figma</span>
+                    <span class="tech-tag">Design System</span>
+                    <span class="tech-tag">Prototype</span>
+                </div>
+                <div class="project-actions">
+                    <a href="https://www.figma.com/proto/88FqKvRnm05pMoe4XnofD7/Dribbble?node-id=0-1&t=SHkqmR8x5tIcS0FT-1" target="_blank" class="btn-view">👁️ View</a>
+                </div>
+            </div>
+        </article>
+
+        <article class="project-card">
+            <div class="project-image">
+                <div class="placeholder-img">🍕</div>
+            </div>
+            <div class="project-content">
+                <h3>Food Ordering App</h3>
+                <p class="project-desc">A mobile application for food ordering with restaurant catalog, user reviews and delivery tracking</p>
+                <div class="project-meta">
+                    <span class="meta-item">📱 iOS & Android</span>
+                    <span class="meta-item">🛒 E-commerce</span>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-tag">Figma</span>
+                    <span class="tech-tag">Mobile Design</span>
+                    <span class="tech-tag">User Flow</span>
+                </div>
+                <div class="project-actions">
+                    <a href="https://www.figma.com/proto/coyJ1d6kSMcSKfl9Q30CTG/foodtabletREAL?t=95AWhTwLJVpPICiy-1" target="_blank" class="btn-view">👁️ View</a>
+                </div>
+            </div>
+        </article>
+
+        <article class="project-card">
+            <div class="project-image">
+                <div class="placeholder-img">🍽️</div>
+            </div>
+            <div class="project-content">
+                <h3>Food Tablet POS System</h3>
+                <p class="project-desc">A restaurant management system for tablets with analytics, order management and reporting for owners</p>
+                <div class="project-meta">
+                    <span class="meta-item">💼 Enterprise</span>
+                    <span class="meta-item">⚙️ Dashboard</span>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-tag">Figma</span>
+                    <span class="tech-tag">Tablet Design</span>
+                    <span class="tech-tag">Admin Panel</span>
+                </div>
+                <div class="project-actions">
+                    <a href="https://www.figma.com/proto/DZ69eRf1s1ETCmm3SVJzMo/FoodApp?node-id=0-1&t=jtqCQ8j6is93VtLs-1" target="_blank" class="btn-view">👁️ View</a>
+                </div>
+            </div>
+        </article>
+    </section>
+</main>
+
+<footer>
+    © 2026 Rafael Developer — Made with ❤️ and CSS
+</footer>
+
+</body>
+</html>

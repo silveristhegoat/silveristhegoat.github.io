@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Rafael - Web Developer & Designer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const links = document.querySelectorAll('a');
+        links.forEach(link => {
+          // only internal navigation
+          if (link.hostname === location.hostname) {
+            link.addEventListener('click', function(e) {
+              const href = this.getAttribute('href');
+              if (!href || href.startsWith('#')) return;
+              e.preventDefault();
+              document.body.classList.add('fade-out');
+              setTimeout(() => { window.location = href; }, 400);
+            });
+          }
+        });
+      });
+    </script>
+</head>
+<body>
+    <header>
+        <nav class="nav">
+            <div class="brand">Digikangelane</div>
+            <ul class="menu">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="skills.html">Skills</a></li>
+                <li><a href="works.html">Works</a></li>
+            </ul>
+            <a class="cta" href="contact.html">Contact</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="hero">
+            <video class="hero-video" autoplay muted loop playsinline>
+                <source src="https://shared.akamai.steamstatic.com/community_assets/images/items/251110/034b6b76df9e1503f89debf793dda991c8a705e0.webm" type="video/webm">
+            </video>
+            <div>
+                <h1 class="title">Building interfaces that feel right</h1>
+                <p class="subtitle">HTML, CSS and a bit of JavaScript.</p>
+
+                <div class="actions">
+                    <a class="cta" href="works.html">View my work</a>
+                    <a class="ghost" href="contact.html">Get in touch</a>
+                </div>
+            </div>
+
+            <article class="card profile" id="about">
+                <img class="avatar" src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/b5/b5bd56c1aa4644a474a2e4972be27ef9e82e517e_full.jpg" alt="Profile picture" />
+                <div>
+                    <span class="badge">Web Developer</span>
+                    <p style="margin:8px 0 0; color: var(--muted);">
+                        I enjoy coding and designing beautiful user interfaces.
+                    </p>
+                    <div class="skills" id="skills">
+                        <span class="skill">HTML5</span>
+                        <span class="skill">CSS3</span>
+                        <span class="skill">Flexbox</span>
+                        <span class="skill">Animations</span>
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <section class="process" id="process">
+            <h2 class="section-title">My Workflow</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Discovery</h3>
+                    <p>Understanding requirements and user needs through research and discussion.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Design</h3>
+                    <p>Creating wireframes, mockups, and prototypes in tools like Figma.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Development</h3>
+                    <p>Turning designs into responsive, accessible code using HTML/CSS/JS.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Testing</h3>
+                    <p>Ensuring functionality, performance and fixing bugs before launch.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="cards" id="works">
+            <article class="project-card">
+                <div class="project-image">
+                    <div class="placeholder-img">💰</div>
+                </div>
+                <div class="project-content">
+                    <h3>Financial Budgeting App</h3>
+                    <p class="project-desc">A modern mobile application for financial management with an intuitive interface</p>
+                    <div class="tech-stack">
+                        <span class="tech-tag">Figma</span>
+                        <span class="tech-tag">UI/UX</span>
+                        <span class="tech-tag">Design System</span>
+                    </div>
+                    <div class="project-actions">
+                        <a href="https://www.figma.com/proto/88FqKvRnm05pMoe4XnofD7/Dribbble?node-id=0-1&t=SHkqmR8x5tIcS0FT-1" target="_blank" class="btn-view">👁️ View</a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="project-card">
+                <div class="project-image">
+                    <div class="placeholder-img">🍕</div>
+                </div>
+                <div class="project-content">
+                    <h3>Food Ordering App</h3>
+                    <p class="project-desc">A mobile application for food ordering with restaurant catalog and user reviews</p>
+                    <div class="tech-stack">
+                        <span class="tech-tag">Figma</span>
+                        <span class="tech-tag">Mobile Design</span>
+                        <span class="tech-tag">Prototype</span>
+                    </div>
+                    <div class="project-actions">
+                        <a href="https://www.figma.com/proto/coyJ1d6kSMcSKfl9Q30CTG/foodtabletREAL?t=95AWhTwLJVpPICiy-1" target="_blank" class="btn-view">👁️ View</a>
+                    </div>
+                </div>
+            </article>
+
+            <article class="project-card">
+                <div class="project-image">
+                    <div class="placeholder-img">🍽️</div>
+                </div>
+                <div class="project-content">
+                    <h3>Food Tablet POS System</h3>
+                    <p class="project-desc">A restaurant management system for tablets with analytics and order management</p>
+                    <div class="tech-stack">
+                        <span class="tech-tag">Figma</span>
+                        <span class="tech-tag">Tablet Design</span>
+                        <span class="tech-tag">Enterprise</span>
+                    </div>
+                    <div class="project-actions">
+                        <a href="https://www.figma.com/proto/DZ69eRf1s1ETCmm3SVJzMo/FoodApp?node-id=0-1&t=jtqCQ8j6is93VtLs-1" target="_blank" class="btn-view">👁️ View</a>
+                    </div>
+                </div>
+            </article>
+        </section>
+    </main>
+
+    <footer id="start">
+        © 2026 Rafael Developer — Made with ❤️ and CSS
+    </footer>
+</body>
+</html>
