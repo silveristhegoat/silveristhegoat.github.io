@@ -135,7 +135,7 @@
     max-width: 1100px;
     margin: 40px auto;
     margin-bottom: 280px;
-    padding: 40px 20px;
+    padding: 80px 20px 40px; /* more top padding so heading won't sit under fixed header */
     display: grid;
     grid-template-columns: 1.2fr 1fr;
     gap: 28px;
@@ -177,7 +177,7 @@
   .title {
     font-size: clamp(2rem, 6vw, 4rem);
     line-height: 1.05;
-    margin: 0 0 12px;
+    margin: 0 0 24px; /* more space below title to separate subtitle */
     background: linear-gradient(100deg, var(--text), #9fffd3);
     -webkit-background-clip: text;
     background-clip: text;
@@ -186,7 +186,7 @@
   
   .subtitle {
     color: var(--muted);
-    margin: 0 0 18px;
+    margin: 8px 0 18px; /* small top margin to lower paragraph beneath title */
   }
   
   .actions {
