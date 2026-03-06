@@ -1,0 +1,124 @@
+:root {
+    --bg-color: #0d0d0d;
+    --text-color: #ffffff;
+    --accent-color: #ff3e3e; /* Meme red */
+    --card-bg: #1a1a1a;
+    --btn-hover: #ff1a1a;
+    --border-color: #333;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial Black', Impact, sans-serif; /* Meme fonts */
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.container {
+    width: 90%;
+    max-width: 800px;
+    padding: 20px;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    color: var(--accent-color);
+    margin-bottom: 5px;
+    letter-spacing: -2px;
+}
+
+.subtitle {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9rem;
+    opacity: 0.7;
+    margin-bottom: 30px;
+}
+
+.meme-box {
+    background-color: var(--card-bg);
+    border: 5px solid white; /* Thick meme border */
+    padding: 40px;
+    box-shadow: 10px 10px 0px var(--accent-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.excuse-text {
+    font-size: 1.8rem;
+    min-height: 120px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 30px;
+    transition: transform 0.3s ease;
+}
+
+/* Animation for the text appearance */
+.animate-in {
+    animation: memeAppear 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes memeAppear {
+    0% {
+        opacity: 0;
+        transform: scale(0.5) rotate(-5deg);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+.controls {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+button {
+    padding: 15px 30px;
+    font-family: inherit;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+}
+
+.primary-btn {
+    background-color: white;
+    color: black;
+}
+
+.primary-btn:hover {
+    background-color: var(--accent-color);
+    color: white;
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 white;
+}
+
+.secondary-btn {
+    background-color: #333;
+    color: white;
+    border: 1px solid #555;
+}
+
+.secondary-btn:hover {
+    background-color: #444;
+    transform: translate(-2px, -2px);
+}
+
+footer {
+    margin-top: 40px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.8rem;
+    opacity: 0.5;
+}
