@@ -1,1 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEURAL_LINK | COUNTDOWN</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="scanlines"></div>
+    <div class="container">
+        <header>
+            <h1 class="glitch" data-text="SYSTEM_COUNTDOWN">SYSTEM_COUNTDOWN</h1>
+            <div class="status-bar">
+                <span class="status">STATUS: ONLINE</span>
+                <span class="location">LOC: NIGHT_CITY</span>
+            </div>
+        </header>
+
+        <main>
+            <div class="input-panel">
+                <div class="panel-header">
+                    <span class="panel-icon">⚡</span>
+                    <label for="target-date">TEMPORAL_TARGETING_SYSTEM</label>
+                </div>
+                <div class="input-container">
+                    <input type="text" id="target-date" placeholder="YYYY-MM-DD HH:MM:SS" spellcheck="false" autocomplete="off">
+                    <div class="input-accent"></div>
+                </div>
+                <div class="input-hint">FORMAT: [YEAR]-[MONTH]-[DAY] [HOUR]:[MIN]:[SEC]</div>
+            </div>
+
+            <div id="countdown" class="countdown-grid">
+                <div class="time-block">
+                    <span id="days" class="time-val">00</span>
+                    <span class="time-label">DAYS</span>
+                </div>
+                <div class="time-block">
+                    <span id="hours" class="time-val">00</span>
+                    <span class="time-label">HOURS</span>
+                </div>
+                <div class="time-block">
+                    <span id="minutes" class="time-val">00</span>
+                    <span class="time-label">MINS</span>
+                </div>
+                <div class="time-block">
+                    <span id="seconds" class="time-val">00</span>
+                    <span class="time-label">SECS</span>
+                </div>
+            </div>
+            
+            <div id="expired-msg" class="expired-hidden">
+                <div class="end-overlay">
+                    <h2 class="glitch large" data-text="OBJECTIVE_REACHED">OBJECTIVE_REACHED</h2>
+                    <p class="end-sub">TEMPORAL_LOCK_RELEASED</p>
+                    <button id="reset-btn" class="cyber-btn">REBOOT_SYSTEM</button>
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="bottom-accent"></div>
+            <p>CRYPTO-LOCKED // v.2.0.77</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
 
