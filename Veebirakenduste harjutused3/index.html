@@ -1,1 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIME LOST | Social Media Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>TIME <span class="accent">LOST</span></h1>
+            <p class="subtitle">How much of your life is vanishing into the scroll?</p>
+        </header>
 
+        <main>
+            <div class="input-section">
+                <label for="hours-input">Hours spent daily on social media</label>
+                <div class="input-wrapper">
+                    <input type="number" id="hours-input" placeholder="0" min="0" max="24" step="0.5">
+                    <span class="unit">HRS</span>
+                </div>
+            </div>
+
+            <div class="results-grid">
+                <div class="result-card">
+                    <span class="label">Hours Per Year</span>
+                    <h2 id="hours-year" class="counter">0</h2>
+                </div>
+                <div class="result-card">
+                    <span class="label">Days Per Year</span>
+                    <h2 id="days-year" class="counter">0</h2>
+                </div>
+                <div class="result-card wide">
+                    <span class="label">Of Your Waking Life</span>
+                    <h2 id="percent-waking" class="counter">0</h2>
+                    <span class="unit-percent">%</span>
+                </div>
+            </div>
+
+            <p class="disclaimer">*Based on 16 waking hours per day.</p>
+        </main>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
