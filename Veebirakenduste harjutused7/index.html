@@ -1,1 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VaultCheck | Password Strength Evaluator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="shield-icon">🛡️</div>
+        <header>
+            <h1>VaultCheck</h1>
+            <p>Enter a password to analyze its entropy.</p>
+        </header>
+
+        <main class="checker-card">
+            <div class="input-group">
+                <input type="password" id="password-input" placeholder="Enter your password..." autocomplete="off">
+                <button id="toggle-pass" type="button">SHOW</button>
+            </div>
+
+            <div class="strength-meter">
+                <div id="strength-bar"></div>
+            </div>
+            <p id="strength-text">Strength: <span>None</span></p>
+
+            <ul class="requirement-list">
+                <li id="length" class="req-item">
+                    <span class="icon">○</span> At least 8 characters
+                </li>
+                <li id="case" class="req-item">
+                    <span class="icon">○</span> Uppercase & lowercase
+                </li>
+                <li id="number" class="req-item">
+                    <span class="icon">○</span> At least one number
+                </li>
+                <li id="symbol" class="req-item">
+                    <span class="icon">○</span> At least one symbol (@$!%*?&)
+                </li>
+            </ul>
+        </main>
+
+        <footer>
+            <p>Your data stays on your machine. No backend involved.</p>
+        </footer>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
 
