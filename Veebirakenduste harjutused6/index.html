@@ -1,1 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fallacy Finder | Test Your Logic</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>Fallacy Finder</h1>
+            <p>Can you spot the flaw in the argument?</p>
+        </header>
+
+        <section id="welcome-screen" class="card">
+            <h2>Master the Art of Argument</h2>
+            <p class="welcome-text">Before you begin, would you like to test your skills or study the common flaws in logic?</p>
+            <div class="menu-grid">
+                <button id="start-quiz-btn" class="menu-btn primary">
+                    <span class="btn-title">Take the Quiz</span>
+                    <span class="btn-sub">10 questions to test your logic</span>
+                </button>
+                <button id="start-hard-btn" class="menu-btn danger">
+                    <span class="btn-title">Hard Mode</span>
+                    <span class="btn-sub">Complex scenarios & no hints</span>
+                </button>
+                <button id="view-library-btn" class="menu-btn secondary">
+                    <span class="btn-title">Study Fallacies</span>
+                    <span class="btn-sub">Browse names and meanings</span>
+                </button>
+            </div>
+        </section>
+
+        <section id="library-screen" class="card hidden">
+            <div class="library-header">
+                <button id="back-to-menu-btn" class="text-link">← Back to Menu</button>
+                <h2>Fallacy Library</h2>
+            </div>
+            <div id="fallacy-list" class="library-grid"></div>
+            <button id="library-start-btn" class="primary-btn">Ready to Start Quiz?</button>
+        </section>
+
+        <main id="quiz-card" class="card hidden">
+            <div class="quiz-controls">
+                <button id="quiz-back-btn" class="icon-text-btn" title="Back to Menu">← Menu</button>
+                <button id="quiz-restart-btn" class="icon-text-btn" title="Restart Quiz">↺ Restart</button>
+            </div>
+            <div id="progress-container">
+                <div id="progress-bar"></div>
+            </div>
+
+            <div id="question-container">
+                <div class="question-header">
+                    <span id="question-meta">Question 1 of 10</span>
+                    <span id="score-display">Score: 0</span>
+                </div>
+                <h2 id="statement">Loading statement...</h2>
+                <div id="options" class="options-grid"></div>
+            </div>
+
+            <div id="feedback-container" class="hidden">
+                <div id="feedback-alert" class="feedback-banner"></div>
+                <div class="explanation-box">
+                    <h3>Explanation</h3>
+                    <p id="explanation-text"></p>
+                </div>
+                <button id="next-btn" class="primary-btn">Next Question</button>
+            </div>
+        </main>
+
+        <section id="result-screen" class="card hidden">
+            <h2>Quiz Complete!</h2>
+            <div class="final-score-box">
+                <span class="score-label">Your Logic Level:</span>
+                <h1 id="final-score">0/0</h1>
+                <p id="score-message"></p>
+            </div>
+            <button id="restart-btn" class="primary-btn">Try Again</button>
+        </section>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
 
