@@ -1,0 +1,229 @@
+:root {
+  --bg-1: #fff6dc;
+  --bg-2: #f7efe0;
+  --panel: rgba(255, 255, 255, 0.82);
+  --ink: #242424;
+  --accent: #ff6d00;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Space Grotesk", "Segoe UI", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 109, 0, 0.18), transparent 36%),
+    radial-gradient(circle at 80% 80%, rgba(0, 102, 255, 0.12), transparent 42%),
+    linear-gradient(140deg, var(--bg-1), var(--bg-2));
+}
+
+.app {
+  width: min(960px, 95vw);
+  margin: 24px auto;
+  display: grid;
+  gap: 14px;
+  animation: fade-in 350ms ease-out;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  padding: 16px;
+  backdrop-filter: blur(8px);
+}
+
+h1 {
+  margin: 0 0 10px;
+  letter-spacing: 0.03em;
+}
+
+h2 {
+  margin: 0 0 10px;
+  letter-spacing: 0.02em;
+}
+
+.gallery-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.gallery-head h2 {
+  margin: 0;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+}
+
+select {
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font: inherit;
+  background: #fff;
+}
+
+input[type="color"] {
+  width: 42px;
+  height: 32px;
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+
+input[type="range"] {
+  accent-color: var(--accent);
+}
+
+button {
+  border: none;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-family: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  color: white;
+  background: linear-gradient(135deg, #e95d00, #ff8c42);
+  box-shadow: 0 6px 14px rgba(233, 93, 0, 0.35);
+  transition: transform 120ms ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
+}
+
+button.secondary {
+  color: var(--ink);
+  background: #ffffff;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.status {
+  margin: 10px 0 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  opacity: 0.82;
+}
+
+.gallery-empty {
+  margin: 0 0 14px;
+  font-weight: 600;
+  opacity: 0.75;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.gallery-card {
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+.gallery-thumb {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: #fafafa;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.gallery-meta {
+  padding: 10px;
+  display: grid;
+  gap: 8px;
+}
+
+.gallery-date {
+  font-size: 0.8rem;
+  opacity: 0.75;
+}
+
+.gallery-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.gallery-actions button {
+  flex: 1;
+  padding: 8px 10px;
+  font-size: 0.85rem;
+}
+
+.canvas-wrap {
+  background: white;
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+canvas {
+  display: block;
+  width: 100%;
+  height: min(70vh, 600px);
+  touch-action: none;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .app {
+    margin: 12px auto;
+  }
+
+  .controls {
+    gap: 10px;
+  }
+
+  label {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .gallery-head {
+    flex-wrap: wrap;
+  }
+}
