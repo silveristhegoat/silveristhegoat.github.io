@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Particle Sandbox</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Particle Sandbox</h1>
+        <div class="controls">
+            <div class="particle-types">
+                <button class="particle-btn active" data-type="sand">Sand</button>
+                <button class="particle-btn" data-type="water">Water</button>
+                <button class="particle-btn" data-type="gas">Gas</button>
+                <button class="particle-btn" data-type="organism">Organism</button>
+                <button class="particle-btn" data-type="wall">Wall</button>
+            </div>
+            <div class="force-types">
+                <button class="force-btn" data-force="attract">🧲 Attract</button>
+                <button class="force-btn" data-force="repel">💨 Repel</button>
+            </div>
+            <div class="actions">
+                <button id="clearBtn">Clear All</button>
+                <button id="pauseBtn">Pause</button>
+                <button id="heatMapBtn">Heat Map 🌡️</button>
+                <label>
+                    Logo Text: <input type="text" id="logoText" maxlength="15" value="PARTICLE" placeholder="Enter text">
+                </label>
+                <button id="formTextBtn">Form Logo ✨</button>
+                <label>
+                    Brush Size: <input type="range" id="brushSize" min="1" max="20" value="5">
+                    <span id="brushSizeValue">5</span>
+                </label>
+                <label>
+                    Force Strength: <input type="range" id="forceStrength" min="1" max="10" value="5">
+                    <span id="forceStrengthValue">5</span>
+                </label>
+                <label>
+                    Wind →: <input type="range" id="windX" min="-10" max="10" value="0">
+                    <span id="windXValue">0</span>
+                </label>
+                <label>
+                    Wind ↓: <input type="range" id="windY" min="-10" max="10" value="0">
+                    <span id="windYValue">0</span>
+                </label>
+            </div>
+            <div class="stats">
+                <span>Particles: <span id="particleCount">0</span></span>
+                <span>FPS: <span id="fps">0</span></span>
+            </div>
+        </div>
+        <canvas id="canvas"></canvas>
+        <div class="info">
+            <p><strong>Controls:</strong> Click and drag to draw particles | Use particle type buttons to switch modes</p>
+            <p><strong>Sand:</strong> Falls and piles up | <strong>Water:</strong> Flows and spreads | <strong>Gas:</strong> Rises and disperses | <strong>Organism:</strong> Moves, reproduces, and dies | <strong>Wall:</strong> Immovable barrier</p>
+        </div>
+    </div>
+    <script src="particles.js"></script>
+</body>
+</html>
