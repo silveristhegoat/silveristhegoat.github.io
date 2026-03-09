@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digital Nightmare</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="background-grid" aria-hidden="true"></div>
+
+  <main class="app-shell">
+    <header class="hero">
+      <h1>Digital Nightmare</h1>
+      <p>Upload a photo or open your camera. Move and click to mutate reality into cyberpunk mush.</p>
+    </header>
+
+    <section class="controls" aria-label="Input controls">
+      <label class="control file-control">
+        <span>Upload Photo</span>
+        <input id="photoInput" type="file" accept="image/*">
+      </label>
+      <button id="cameraToggle" type="button" class="control camera-control">Enable Camera</button>
+      <button id="micToggle" type="button" class="control mic-control">Enable Mic Reactivity</button>
+      <button id="mirrorToggle" type="button" class="control mirror-control">Mirror: Off</button>
+      <button id="asciiToggle" type="button" class="control ascii-control">ASCII: Off</button>
+      <button id="snapshot" type="button" class="control shot-control">Freeze Region</button>
+      <button id="saveChaos" type="button" class="control save-control">Chaos Save</button>
+    </section>
+
+    <section class="stage-wrap">
+      <canvas id="stage" aria-label="Cyberpunk transformed output"></canvas>
+      <div class="hint">Move mouse to warp. Click for shock pulses. Drag to select pixel-sort area. Double-click to clear. Freeze Region locks one zone while the rest keeps moving. Enable mic and shout to break the frame. Mirror mode adds 4 or 8 kaleidoscope sectors. ASCII mode turns everything into live text symbols. Chaos Save exports a frame with one random artifact.</div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
