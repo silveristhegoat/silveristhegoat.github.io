@@ -1,0 +1,163 @@
+:root {
+  --bg-deep: #06020d;
+  --bg-mid: #120326;
+  --bg-hot: #2a0d44;
+  --neon-cyan: #19f0ff;
+  --neon-pink: #ff2da6;
+  --neon-lime: #c1ff17;
+  --text-main: #f3f8ff;
+  --text-muted: #a3b2c7;
+  --panel: rgba(8, 5, 16, 0.8);
+  --border: rgba(25, 240, 255, 0.35);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: "Space Mono", monospace;
+  color: var(--text-main);
+  background:
+    radial-gradient(circle at 20% 10%, rgba(255, 45, 166, 0.18), transparent 45%),
+    radial-gradient(circle at 80% 18%, rgba(25, 240, 255, 0.2), transparent 42%),
+    linear-gradient(165deg, var(--bg-deep), var(--bg-mid) 42%, var(--bg-hot));
+  overflow-x: hidden;
+}
+
+.background-grid {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(25, 240, 255, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(25, 240, 255, 0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(circle at 50% 0%, black 45%, transparent 95%);
+  animation: gridShift 9s linear infinite;
+}
+
+.app-shell {
+  width: min(1100px, 94vw);
+  margin: 1.8rem auto 2.2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.hero {
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--panel);
+  backdrop-filter: blur(6px);
+}
+
+.hero h1 {
+  margin: 0;
+  font-family: "Audiowide", cursive;
+  letter-spacing: 0.07em;
+  font-size: clamp(1.5rem, 2.8vw, 2.4rem);
+  color: var(--neon-cyan);
+  text-shadow: 0 0 16px rgba(25, 240, 255, 0.45);
+}
+
+.hero p {
+  margin: 0.7rem 0 0;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.control {
+  border: 1px solid var(--border);
+  background: rgba(13, 10, 22, 0.88);
+  color: var(--text-main);
+  border-radius: 10px;
+  padding: 0.78rem 1rem;
+  cursor: pointer;
+  font: inherit;
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.control:hover,
+.control:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(255, 45, 166, 0.8);
+  box-shadow: 0 0 0 2px rgba(255, 45, 166, 0.22);
+  outline: none;
+}
+
+.file-control {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.file-control input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.stage-wrap {
+  margin-top: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(7, 6, 16, 0.86);
+  padding: 0.75rem;
+}
+
+#stage {
+  width: 100%;
+  max-height: 70vh;
+  display: block;
+  border-radius: 10px;
+  background: #0a0910;
+}
+
+.hint {
+  margin-top: 0.65rem;
+  font-size: 0.84rem;
+  color: var(--neon-lime);
+  letter-spacing: 0.03em;
+}
+
+@keyframes gridShift {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(32px);
+  }
+}
+
+@media (max-width: 720px) {
+  .app-shell {
+    width: 95vw;
+    margin-top: 1rem;
+  }
+
+  .controls {
+    gap: 0.55rem;
+  }
+
+  .control {
+    width: 100%;
+    text-align: left;
+  }
+}
