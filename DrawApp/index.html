@@ -1,1 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Draw App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="panel">
+      <h1>Draw App</h1>
+      <div class="controls">
+        <label>
+          Tool
+          <select id="toolPicker">
+            <option value="brush" selected>Brush</option>
+            <option value="eraser">Eraser</option>
+            <option value="fill">Fill</option>
+            <option value="line">Line</option>
+            <option value="rectangle">Rectangle</option>
+            <option value="circle">Circle</option>
+          </select>
+        </label>
+
+        <label>
+          Color
+          <input id="colorPicker" type="color" value="#0b5fff" />
+        </label>
+
+        <label>
+          Brush Size
+          <input id="sizePicker" type="range" min="1" max="40" value="8" />
+          <span id="sizeValue">8px</span>
+        </label>
+
+        <button id="undoBtn" type="button" class="secondary">Undo</button>
+        <button id="redoBtn" type="button" class="secondary">Redo</button>
+        <button id="saveBtn" type="button" class="secondary">Save to Gallery</button>
+        <button id="clearBtn" type="button">Clear</button>
+      </div>
+      <p id="toolStatus" class="status">Mode: Brush</p>
+    </header>
+
+    <section class="canvas-wrap">
+      <canvas id="drawCanvas" aria-label="Drawing canvas"></canvas>
+    </section>
+
+    <section class="panel gallery-panel" aria-label="Saved drawings gallery">
+      <div class="gallery-head">
+        <h2>Gallery</h2>
+        <button id="clearGalleryBtn" type="button" class="secondary">Clear Gallery</button>
+      </div>
+      <p id="galleryEmpty" class="gallery-empty">No drawings saved yet.</p>
+      <div id="galleryList" class="gallery-grid"></div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
 
