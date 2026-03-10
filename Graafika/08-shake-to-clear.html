@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graafika 08 - Shake to Clear</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+
+    :root {
+      --bg-1: #061224;
+      --bg-2: #0f2d3b;
+      --bg-3: #173951;
+      --ink: #e4f4ff;
+      --muted: #9ec0cf;
+      --accent: #ffe9a8;
+      --card: rgba(9, 20, 35, 0.55);
+      --card-border: rgba(185, 230, 252, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 10% 0%, #274f67 0%, transparent 35%),
+        radial-gradient(circle at 90% 85%, #0d5563 0%, transparent 45%),
+        linear-gradient(130deg, var(--bg-1), var(--bg-2) 45%, var(--bg-3));
+    }
+
+    .panel {
+      position: fixed;
+      left: 1rem;
+      top: 1rem;
+      max-width: min(31rem, calc(100vw - 2rem));
+      padding: 0.9rem 1rem;
+      border: 1px solid var(--card-border);
+      background: var(--card);
+      backdrop-filter: blur(8px);
+      border-radius: 0.8rem;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+      z-index: 4;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 0.35rem 0 0;
+      font-size: 0.92rem;
+      line-height: 1.4;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .status {
+      margin-top: 0.45rem;
+      font-size: 0.83rem;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    #scene {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .piece {
+      position: absolute;
+      border: 1px solid rgba(185, 230, 252, 0.35);
+      background: rgba(17, 44, 73, 0.72);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 7px 20px rgba(0, 0, 0, 0.2);
+      transform: translate3d(0, 0, 0);
+      transition: border-color 180ms ease, background 180ms ease;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .piece.circle {
+      border-radius: 999px;
+    }
+
+    .piece.rect {
+      border-radius: 0.55rem;
+    }
+
+    .piece.diamond {
+      border-radius: 0.35rem;
+      transform: rotate(45deg);
+    }
+
+    .reset {
+      position: fixed;
+      right: 1rem;
+      top: 1rem;
+      z-index: 4;
+      border: 1px solid rgba(199, 236, 254, 0.35);
+      background: rgba(21, 38, 66, 0.68);
+      color: var(--ink);
+      border-radius: 0.7rem;
+      padding: 0.64rem 0.8rem;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .reset:hover,
+    .reset:focus-visible {
+      outline: none;
+      background: rgba(39, 66, 105, 0.72);
+      border-color: rgba(255, 233, 168, 0.58);
+    }
+
+    @media (max-width: 700px) {
+      .panel {
+        left: 0.75rem;
+        top: 0.75rem;
+        padding: 0.75rem 0.85rem;
+      }
+
+      .reset {
+        right: 0.75rem;
+        top: auto;
+        bottom: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="panel" aria-live="polite">
+    <h1 class="title">Shake to Clear</h1>
+    <p class="subtitle">Move the mouse rapidly left and right. A strong shake will make all objects fall and fade out.</p>
+    <div class="status" id="status">Shake meter: 0 / 100</div>
+  </section>
+
+  <button id="reset" class="reset" type="button">Reset Scene</button>
+  <div id="scene"></div>
+
+  <script>
+    const scene = document.getElementById('scene');
+    const statusEl = document.getElementById('status');
+    const resetBtn = document.getElementById('reset');
+
+    const pieces = [];
+    const pointerHistory = [];
+
+    let hasCleared = false;
+    let lastX = null;
+    let lastDirection = 0;
+    let shakeScore = 0;
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function pick(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function makePiece() {
+      const el = document.createElement('div');
+      const shape = pick(['circle', 'rect', 'diamond']);
+      const size = random(18, 72);
+      const x = random(2, 92);
+      const y = random(12, 88);
+
+      el.className = `piece ${shape}`;
+      el.style.width = `${size}px`;
+      el.style.height = `${size}px`;
+      el.style.left = `${x}%`;
+      el.style.top = `${y}%`;
+      el.style.opacity = random(0.62, 0.96).toFixed(2);
+      el.style.background = `hsla(${random(180, 222).toFixed(0)}, ${random(45, 72).toFixed(0)}%, ${random(24, 44).toFixed(0)}%, 0.76)`;
+
+      scene.appendChild(el);
+
+      return {
+        el,
+        x: (x / 100) * window.innerWidth,
+        y: (y / 100) * window.innerHeight,
+        vx: random(-0.2, 0.2),
+        vy: random(-0.15, 0.15),
+        rotation: random(-12, 12),
+        spin: random(-0.8, 0.8),
+        opacity: parseFloat(el.style.opacity),
+        falling: false,
+      };
+    }
+
+    function buildScene() {
+      scene.innerHTML = '';
+      pieces.length = 0;
+      for (let i = 0; i < 42; i++) {
+        pieces.push(makePiece());
+      }
+      hasCleared = false;
+      shakeScore = 0;
+      statusEl.textContent = 'Shake meter: 0 / 100';
+    }
+
+    function triggerClear() {
+      if (hasCleared) {
+        return;
+      }
+      hasCleared = true;
+      statusEl.textContent = 'Cleared! Click Reset Scene to rebuild.';
+
+      for (const p of pieces) {
+        p.falling = true;
+        p.vx += random(-2.4, 2.4);
+        p.vy += random(-2.2, -0.4);
+        p.spin += random(-4.5, 4.5);
+      }
+    }
+
+    function updateShake(clientX, time) {
+      if (lastX === null) {
+        lastX = clientX;
+        pointerHistory.push({ x: clientX, t: time });
+        return;
+      }
+
+      const dx = clientX - lastX;
+      lastX = clientX;
+
+      if (Math.abs(dx) < 2) {
+        shakeScore = Math.max(0, shakeScore - 1.2);
+      } else {
+        const direction = dx > 0 ? 1 : -1;
+        if (lastDirection !== 0 && direction !== lastDirection && Math.abs(dx) > 7) {
+          shakeScore += Math.min(18, Math.abs(dx) * 0.8);
+        } else {
+          shakeScore += Math.min(4, Math.abs(dx) * 0.2);
+        }
+        lastDirection = direction;
+      }
+
+      pointerHistory.push({ x: clientX, t: time });
+
+      while (pointerHistory.length > 0 && time - pointerHistory[0].t > 260) {
+        pointerHistory.shift();
+      }
+
+      if (pointerHistory.length >= 2) {
+        const span = pointerHistory[pointerHistory.length - 1].x - pointerHistory[0].x;
+        if (Math.abs(span) < 32) {
+          shakeScore += 2.5;
+        }
+      }
+
+      shakeScore = Math.max(0, Math.min(130, shakeScore * 0.96));
+      statusEl.textContent = `Shake meter: ${Math.min(100, Math.round(shakeScore))} / 100`;
+
+      if (shakeScore >= 100) {
+        triggerClear();
+      }
+    }
+
+    function animate() {
+      const floor = window.innerHeight + 120;
+
+      for (const p of pieces) {
+        if (p.falling) {
+          p.vy += 0.19;
+          p.vx *= 0.993;
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rotation += p.spin;
+          p.opacity -= 0.008;
+
+          if (p.y > floor) {
+            p.opacity = 0;
+          }
+        } else {
+          p.x += p.vx;
+          p.y += p.vy;
+
+          if (p.x < -40 || p.x > window.innerWidth + 40) {
+            p.vx *= -1;
+          }
+          if (p.y < -40 || p.y > window.innerHeight + 40) {
+            p.vy *= -1;
+          }
+        }
+
+        p.el.style.transform = `translate3d(${p.x}px, ${p.y}px, 0) rotate(${p.rotation.toFixed(1)}deg)`;
+        p.el.style.opacity = Math.max(0, p.opacity).toFixed(3);
+      }
+
+      if (!hasCleared) {
+        shakeScore = Math.max(0, shakeScore - 0.35);
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('pointermove', (event) => {
+      updateShake(event.clientX, performance.now());
+    }, { passive: true });
+
+    window.addEventListener('resize', () => {
+      // Rebuild so element positions remain consistent with viewport changes.
+      buildScene();
+      lastX = null;
+      lastDirection = 0;
+      pointerHistory.length = 0;
+    });
+
+    resetBtn.addEventListener('click', () => {
+      buildScene();
+      lastX = null;
+      lastDirection = 0;
+      pointerHistory.length = 0;
+    });
+
+    buildScene();
+    animate();
+  </script>
+</body>
+</html>

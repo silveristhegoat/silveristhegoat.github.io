@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en" class="theme-dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graafika 06 - Toggle Themes with Sound</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+
+    :root {
+      --bg-1: #061224;
+      --bg-2: #0f2d3b;
+      --bg-3: #173951;
+      --ink: #e4f4ff;
+      --muted: #9ec0cf;
+      --accent: #ffe9a8;
+      --card: rgba(9, 20, 35, 0.55);
+      --card-border: rgba(185, 230, 252, 0.18);
+      --btn-bg: rgba(19, 43, 73, 0.85);
+      --btn-border: rgba(199, 236, 254, 0.35);
+    }
+
+    html.theme-light {
+      --bg-1: #e8f7ff;
+      --bg-2: #c8e9f6;
+      --bg-3: #a3d4e8;
+      --ink: #0f2739;
+      --muted: #33586e;
+      --accent: #8c5d00;
+      --card: rgba(255, 255, 255, 0.66);
+      --card-border: rgba(17, 50, 72, 0.18);
+      --btn-bg: rgba(232, 246, 255, 0.88);
+      --btn-border: rgba(19, 60, 86, 0.22);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--ink);
+      transition: color 220ms ease;
+      background: radial-gradient(circle at 10% 0%, color-mix(in srgb, var(--bg-3) 70%, #2f6f90 30%) 0%, transparent 35%),
+        radial-gradient(circle at 90% 85%, color-mix(in srgb, var(--bg-2) 75%, #0d5563 25%) 0%, transparent 45%),
+        linear-gradient(130deg, var(--bg-1), var(--bg-2) 45%, var(--bg-3));
+      transition: background 260ms ease, color 220ms ease;
+    }
+
+    .layout {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 1rem;
+    }
+
+    .panel {
+      width: min(760px, 100%);
+      border: 1px solid var(--card-border);
+      background: var(--card);
+      backdrop-filter: blur(8px);
+      border-radius: 0.8rem;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+      padding: clamp(1rem, 0.95rem + 1.6vw, 1.7rem);
+      transition: background 220ms ease, border-color 220ms ease;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1rem, 0.9rem + 1vw, 1.35rem);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    p {
+      margin: 0.38rem 0 1rem;
+      font-size: clamp(0.9rem, 0.86rem + 0.3vw, 0.98rem);
+      line-height: 1.45;
+      color: var(--muted);
+      font-weight: 500;
+      max-width: 60ch;
+    }
+
+    .row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.7rem;
+      align-items: center;
+    }
+
+    .toggle-btn {
+      border: 1px solid var(--btn-border);
+      background: var(--btn-bg);
+      color: var(--ink);
+      border-radius: 0.7rem;
+      padding: 0.68rem 0.88rem;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 120ms ease, filter 120ms ease, background 220ms ease, border-color 220ms ease;
+    }
+
+    .toggle-btn:hover,
+    .toggle-btn:focus-visible {
+      outline: none;
+      transform: translateY(-1px);
+      filter: brightness(1.04);
+    }
+
+    .status {
+      font-size: 0.86rem;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    .swatches {
+      margin-top: 1rem;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(100px, 1fr));
+      gap: 0.55rem;
+    }
+
+    .swatches div {
+      border: 1px solid var(--card-border);
+      border-radius: 0.55rem;
+      height: 56px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      transition: border-color 220ms ease;
+    }
+
+    .swatches .s1 { background: var(--bg-1); }
+    .swatches .s2 { background: var(--bg-2); }
+    .swatches .s3 { background: var(--bg-3); }
+
+    @media (max-width: 700px) {
+      .panel {
+        padding: 0.85rem;
+      }
+
+      .swatches {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="layout">
+    <section class="panel">
+      <h1>Toggle Themes with Sound</h1>
+      <p>Switch between dark and light themes. Each switch plays a short pleasant click generated in JavaScript.</p>
+
+      <div class="row">
+        <button id="toggleTheme" class="toggle-btn" type="button">Switch to Light Theme</button>
+        <div id="status" class="status">Current theme: Dark</div>
+      </div>
+
+      <div class="swatches" aria-hidden="true">
+        <div class="s1"></div>
+        <div class="s2"></div>
+        <div class="s3"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const root = document.documentElement;
+    const button = document.getElementById('toggleTheme');
+    const statusEl = document.getElementById('status');
+
+    let audioContext = null;
+
+    function ensureAudio() {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioContext.state === 'suspended') {
+        audioContext.resume();
+      }
+    }
+
+    function playToggleSound(isLight) {
+      ensureAudio();
+      const now = audioContext.currentTime;
+
+      const osc = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      const filter = audioContext.createBiquadFilter();
+
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(isLight ? 720 : 560, now);
+      osc.frequency.exponentialRampToValueAtTime(isLight ? 980 : 760, now + 0.065);
+
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(1800, now);
+
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(0.14, now + 0.012);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.11);
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioContext.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.12);
+    }
+
+    function applyTheme(isLight) {
+      root.classList.toggle('theme-light', isLight);
+      root.classList.toggle('theme-dark', !isLight);
+      button.textContent = isLight ? 'Switch to Dark Theme' : 'Switch to Light Theme';
+      statusEl.textContent = `Current theme: ${isLight ? 'Light' : 'Dark'}`;
+    }
+
+    button.addEventListener('click', () => {
+      const isCurrentlyLight = root.classList.contains('theme-light');
+      const nextIsLight = !isCurrentlyLight;
+
+      applyTheme(nextIsLight);
+      playToggleSound(nextIsLight);
+    });
+
+    applyTheme(false);
+  </script>
+</body>
+</html>

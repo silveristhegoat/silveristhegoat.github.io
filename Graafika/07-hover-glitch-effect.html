@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graafika 07 - Hover Glitch Effect</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+
+    :root {
+      --bg-1: #061224;
+      --bg-2: #0f2d3b;
+      --bg-3: #173951;
+      --ink: #e4f4ff;
+      --muted: #9ec0cf;
+      --accent: #ffe9a8;
+      --card: rgba(9, 20, 35, 0.55);
+      --card-border: rgba(185, 230, 252, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 10% 0%, #274f67 0%, transparent 35%),
+        radial-gradient(circle at 90% 85%, #0d5563 0%, transparent 45%),
+        linear-gradient(130deg, var(--bg-1), var(--bg-2) 45%, var(--bg-3));
+    }
+
+    .layout {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 1rem;
+    }
+
+    .panel {
+      width: min(980px, 100%);
+      border: 1px solid var(--card-border);
+      background: var(--card);
+      backdrop-filter: blur(8px);
+      border-radius: 0.8rem;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+      padding: clamp(1rem, 0.95rem + 1.6vw, 1.8rem);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1rem, 0.9rem + 1vw, 1.35rem);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    p {
+      margin: 0.4rem 0 1rem;
+      font-size: clamp(0.9rem, 0.86rem + 0.3vw, 0.98rem);
+      line-height: 1.45;
+      color: var(--muted);
+      font-weight: 500;
+      max-width: 64ch;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.9rem;
+    }
+
+    .glitch-card {
+      position: relative;
+      aspect-ratio: 4 / 5;
+      border-radius: 0.75rem;
+      overflow: hidden;
+      border: 1px solid rgba(185, 230, 252, 0.25);
+      background: #0b1b30;
+      isolation: isolate;
+    }
+
+    .image-layer {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transition: transform 220ms ease, filter 220ms ease;
+    }
+
+    .image-layer.base {
+      z-index: 1;
+      transform: scale(1.01);
+    }
+
+    .image-layer.r,
+    .image-layer.b {
+      z-index: 2;
+      mix-blend-mode: screen;
+      opacity: 0;
+    }
+
+    .image-layer.r {
+      filter: contrast(1.2) saturate(1.3) hue-rotate(-22deg);
+    }
+
+    .image-layer.b {
+      filter: contrast(1.2) saturate(1.3) hue-rotate(28deg);
+    }
+
+    .scanlines {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      background-image: linear-gradient(transparent 0%, rgba(185, 230, 252, 0.08) 50%, transparent 100%);
+      background-size: 100% 4px;
+      mix-blend-mode: overlay;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .caption {
+      position: absolute;
+      z-index: 4;
+      left: 0.6rem;
+      right: 0.6rem;
+      bottom: 0.55rem;
+      padding: 0.38rem 0.5rem;
+      border-radius: 0.5rem;
+      background: rgba(9, 20, 35, 0.62);
+      border: 1px solid rgba(185, 230, 252, 0.2);
+      color: var(--ink);
+      font-size: 0.78rem;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .glitch-card:hover .base,
+    .glitch-card:focus-within .base {
+      animation: jitter 110ms steps(2, end) infinite;
+      filter: contrast(1.14) saturate(1.12);
+    }
+
+    .glitch-card:hover .r,
+    .glitch-card:focus-within .r {
+      opacity: 0.42;
+      animation: splitR 130ms steps(2, end) infinite;
+    }
+
+    .glitch-card:hover .b,
+    .glitch-card:focus-within .b {
+      opacity: 0.42;
+      animation: splitB 120ms steps(2, end) infinite;
+    }
+
+    .glitch-card:hover .scanlines,
+    .glitch-card:focus-within .scanlines {
+      opacity: 0.75;
+      animation: lines 300ms linear infinite;
+    }
+
+    @keyframes jitter {
+      0% { transform: translate(0, 0) scale(1.02); }
+      20% { transform: translate(1.5px, -1px) scale(1.02); }
+      40% { transform: translate(-1.8px, 1.2px) scale(1.02); }
+      60% { transform: translate(1px, 1.6px) scale(1.02); }
+      80% { transform: translate(-1.2px, -0.8px) scale(1.02); }
+      100% { transform: translate(0, 0) scale(1.02); }
+    }
+
+    @keyframes splitR {
+      0% { transform: translate(0, 0) scale(1.02); }
+      50% { transform: translate(-3px, 1px) scale(1.02); }
+      100% { transform: translate(2px, -1px) scale(1.02); }
+    }
+
+    @keyframes splitB {
+      0% { transform: translate(0, 0) scale(1.02); }
+      50% { transform: translate(3px, -1px) scale(1.02); }
+      100% { transform: translate(-2px, 2px) scale(1.02); }
+    }
+
+    @keyframes lines {
+      from { background-position-y: 0; }
+      to { background-position-y: 8px; }
+    }
+
+    @media (max-width: 700px) {
+      .panel {
+        padding: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="layout">
+    <section class="panel">
+      <h1>Hover-Glitch Effect</h1>
+      <p>Move your cursor over an image card. It shakes slightly and shifts color channels to create a glitch look.</p>
+
+      <div class="gallery">
+        <article class="glitch-card" tabindex="0">
+          <div class="image-layer base" style="background-image: url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80');"></div>
+          <div class="image-layer r" style="background-image: url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80');"></div>
+          <div class="image-layer b" style="background-image: url('https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=900&q=80');"></div>
+          <div class="scanlines"></div>
+          <div class="caption">Neon Ridge</div>
+        </article>
+
+        <article class="glitch-card" tabindex="0">
+          <div class="image-layer base" style="background-image: url('https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=900&q=80');"></div>
+          <div class="image-layer r" style="background-image: url('https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=900&q=80');"></div>
+          <div class="image-layer b" style="background-image: url('https://images.unsplash.com/photo-1519608487953-e999c86e7455?auto=format&fit=crop&w=900&q=80');"></div>
+          <div class="scanlines"></div>
+          <div class="caption">Signal Void</div>
+        </article>
+
+        <article class="glitch-card" tabindex="0">
+          <div class="image-layer base" style="background-image: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=900&q=80');"></div>
+          <div class="image-layer r" style="background-image: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=900&q=80');"></div>
+          <div class="image-layer b" style="background-image: url('https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=900&q=80');"></div>
+          <div class="scanlines"></div>
+          <div class="caption">Data Grid</div>
+        </article>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

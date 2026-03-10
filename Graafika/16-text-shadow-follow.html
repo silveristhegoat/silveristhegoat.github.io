@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graafika 16 - Text Shadow Follow</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+
+    :root {
+      --bg-1: #061224;
+      --bg-2: #0f2d3b;
+      --bg-3: #173951;
+      --ink: #e4f4ff;
+      --muted: #9ec0cf;
+      --accent: #ffe9a8;
+      --card: rgba(9, 20, 35, 0.55);
+      --card-border: rgba(185, 230, 252, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 10% 0%, #274f67 0%, transparent 35%),
+        radial-gradient(circle at 90% 85%, #0d5563 0%, transparent 45%),
+        linear-gradient(130deg, var(--bg-1), var(--bg-2) 45%, var(--bg-3));
+      cursor: crosshair;
+    }
+
+    .panel {
+      max-width: min(46rem, calc(100vw - 2rem));
+      margin: 1.5rem auto;
+      padding: 0.9rem 1rem;
+      border: 1px solid var(--card-border);
+      background: var(--card);
+      backdrop-filter: blur(8px);
+      border-radius: 0.8rem;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    .title {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 0.35rem 0 0;
+      font-size: 0.92rem;
+      line-height: 1.4;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .stage {
+      min-height: calc(100vh - 10rem);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3rem;
+      padding: 3rem 1rem;
+    }
+
+    .shadow-text {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-align: center;
+      transition: text-shadow 80ms ease-out;
+      user-select: none;
+      line-height: 1.2;
+    }
+
+    .shadow-text.accent {
+      color: var(--accent);
+    }
+
+    .shadow-text.gradient {
+      background: linear-gradient(135deg, #ffe9a8, #ffc966, #ffaa44);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .shadow-text.blue {
+      color: #7dd3fc;
+    }
+
+    .shadow-text.pink {
+      background: linear-gradient(135deg, #f0abfc, #e879f9, #d946ef);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    @media (max-width: 700px) {
+      .stage {
+        gap: 2.5rem;
+        padding: 2rem 1rem;
+      }
+
+      .shadow-text {
+        font-size: clamp(1.5rem, 7vw, 2.5rem);
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="panel" aria-live="polite">
+    <h1 class="title">Text Shadow Follow</h1>
+    <p class="subtitle">Move your cursor around — shadows point away from it, as if the cursor is a light source.</p>
+  </section>
+
+  <div class="stage">
+    <h2 class="shadow-text" data-shadow>Dynamic Lighting</h2>
+    <h2 class="shadow-text accent" data-shadow>Shadow Follows</h2>
+    <h2 class="shadow-text gradient" data-shadow>Your Cursor</h2>
+    <h2 class="shadow-text blue" data-shadow>Sun Position</h2>
+    <h2 class="shadow-text pink" data-shadow>Move Around</h2>
+  </div>
+
+  <script>
+    const texts = document.querySelectorAll('[data-shadow]');
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+
+    function updateShadows() {
+      texts.forEach(text => {
+        const rect = text.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+
+        // Vector from text to mouse
+        const dx = mouseX - centerX;
+        const dy = mouseY - centerY;
+
+        // Distance for shadow intensity
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const maxDistance = Math.sqrt(window.innerWidth ** 2 + window.innerHeight ** 2);
+        const intensity = Math.min(distance / maxDistance, 1);
+
+        // Shadow points opposite direction (away from light)
+        const shadowDistance = 8 + intensity * 20; // 8px to 28px
+        const angle = Math.atan2(dy, dx);
+        
+        // Shadow offset (opposite to light direction)
+        const offsetX = -Math.cos(angle) * shadowDistance;
+        const offsetY = -Math.sin(angle) * shadowDistance;
+
+        // Multiple shadow layers for depth
+        const blur1 = 4 + intensity * 8;
+        const blur2 = 12 + intensity * 16;
+        const blur3 = 24 + intensity * 32;
+
+        const shadow = `
+          ${offsetX}px ${offsetY}px ${blur1}px rgba(0, 0, 0, 0.5),
+          ${offsetX * 1.5}px ${offsetY * 1.5}px ${blur2}px rgba(0, 0, 0, 0.3),
+          ${offsetX * 2}px ${offsetY * 2}px ${blur3}px rgba(0, 0, 0, 0.2)
+        `;
+
+        text.style.textShadow = shadow;
+      });
+    }
+
+    document.addEventListener('pointermove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      updateShadows();
+    });
+
+    // Initialize shadows
+    updateShadows();
+
+    // Update on resize
+    window.addEventListener('resize', updateShadows);
+  </script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graafika 13 - Dragging Physics</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+
+    :root {
+      --bg-1: #061224;
+      --bg-2: #0f2d3b;
+      --bg-3: #173951;
+      --ink: #e4f4ff;
+      --muted: #9ec0cf;
+      --accent: #ffe9a8;
+      --card: rgba(9, 20, 35, 0.55);
+      --card-border: rgba(185, 230, 252, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 10% 0%, #274f67 0%, transparent 35%),
+        radial-gradient(circle at 90% 85%, #0d5563 0%, transparent 45%),
+        linear-gradient(130deg, var(--bg-1), var(--bg-2) 45%, var(--bg-3));
+    }
+
+    .panel {
+      position: fixed;
+      left: 1rem;
+      top: 1rem;
+      max-width: min(34rem, calc(100vw - 2rem));
+      padding: 0.9rem 1rem;
+      border: 1px solid var(--card-border);
+      background: var(--card);
+      backdrop-filter: blur(8px);
+      border-radius: 0.8rem;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 0.35rem 0 0;
+      font-size: 0.92rem;
+      line-height: 1.4;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .toolbar {
+      position: fixed;
+      right: 1rem;
+      top: 1rem;
+      z-index: 4;
+    }
+
+    .reset-btn {
+      border: 1px solid rgba(199, 236, 254, 0.35);
+      background: rgba(21, 38, 66, 0.7);
+      color: var(--ink);
+      border-radius: 0.65rem;
+      padding: 0.62rem 0.82rem;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .reset-btn:hover,
+    .reset-btn:focus-visible {
+      outline: none;
+      background: rgba(39, 66, 105, 0.76);
+      border-color: rgba(255, 233, 168, 0.6);
+    }
+
+    #stage {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .draggable {
+      position: absolute;
+      border-radius: 0.85rem;
+      border: 1px solid rgba(199, 236, 254, 0.42);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+      transition: box-shadow 180ms ease, border-color 180ms ease, filter 180ms ease;
+    }
+
+    .draggable:active,
+    .draggable.dragging {
+      cursor: grabbing;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      border-color: rgba(255, 233, 168, 0.7);
+      filter: brightness(1.08);
+      z-index: 2;
+    }
+
+    @media (max-width: 700px) {
+      .panel {
+        left: 0.75rem;
+        top: 0.75rem;
+        padding: 0.75rem 0.85rem;
+      }
+
+      .subtitle {
+        font-size: 0.85rem;
+      }
+
+      .toolbar {
+        right: 0.75rem;
+        top: auto;
+        bottom: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="panel" aria-live="polite">
+    <h1 class="title">Dragging Physics</h1>
+    <p class="subtitle">Drag any object. They move with smooth inertia, following your pointer with a slight delay.</p>
+  </section>
+
+  <div class="toolbar">
+    <button id="reset" class="reset-btn" type="button">Reset Positions</button>
+  </div>
+
+  <div id="stage"></div>
+
+  <script>
+    const stage = document.getElementById('stage');
+    const resetBtn = document.getElementById('reset');
+
+    const objects = [];
+    let activeDrag = null;
+
+    const configs = [
+      { label: 'Heavy Box', size: 120, mass: 0.14, bg: 'linear-gradient(135deg, #3a5f7d, #2b4a61)' },
+      { label: 'Med Cube', size: 100, mass: 0.2, bg: 'linear-gradient(135deg, #4a7194, #355475)' },
+      { label: 'Light Orb', size: 90, mass: 0.28, bg: 'linear-gradient(135deg, #5f8db0, #47698c)' },
+      { label: 'Tiny Dot', size: 70, mass: 0.35, bg: 'linear-gradient(135deg, #729eba, #5680a0)' },
+      { label: 'Large Block', size: 140, mass: 0.12, bg: 'linear-gradient(135deg, #2d4f68, #1f3b50)' },
+      { label: 'Swift Tile', size: 85, mass: 0.42, bg: 'linear-gradient(135deg, #82afcc, #6090b0)' },
+    ];
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function createObject(config, index) {
+      const el = document.createElement('div');
+      el.className = 'draggable';
+      el.textContent = config.label;
+      el.style.width = `${config.size}px`;
+      el.style.height = `${config.size}px`;
+      el.style.background = config.bg;
+      
+      const initialX = window.innerWidth * (0.15 + index * 0.12);
+      const initialY = window.innerHeight * (0.25 + (index % 2) * 0.3);
+
+      el.style.left = `${initialX}px`;
+      el.style.top = `${initialY}px`;
+      el.style.transform = 'translate(-50%, -50%)';
+
+      stage.appendChild(el);
+
+      const obj = {
+        el,
+        x: initialX,
+        y: initialY,
+        targetX: initialX,
+        targetY: initialY,
+        vx: 0,
+        vy: 0,
+        mass: config.mass,
+        initialX,
+        initialY,
+      };
+
+      objects.push(obj);
+      return obj;
+    }
+
+    function animate() {
+      for (const obj of objects) {
+        const beingDragged = activeDrag && activeDrag.obj === obj;
+        const friction = beingDragged ? 0.65 : 0.82;
+        const springStrength = beingDragged ? obj.mass * 0.5 : obj.mass;
+
+        const dx = obj.targetX - obj.x;
+        const dy = obj.targetY - obj.y;
+        
+        obj.vx += dx * springStrength;
+        obj.vy += dy * springStrength;
+
+        obj.vx *= friction;
+        obj.vy *= friction;
+
+        obj.x += obj.vx;
+        obj.y += obj.vy;
+
+        obj.el.style.left = `${obj.x}px`;
+        obj.el.style.top = `${obj.y}px`;
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    function startDrag(obj, pointerId, startX, startY) {
+      activeDrag = {
+        obj,
+        pointerId,
+        offsetX: startX - obj.x,
+        offsetY: startY - obj.y,
+      };
+      obj.el.classList.add('dragging');
+      stage.setPointerCapture(pointerId);
+    }
+
+    function moveDrag(clientX, clientY) {
+      if (!activeDrag) {
+        return;
+      }
+      activeDrag.obj.targetX = clientX - activeDrag.offsetX;
+      activeDrag.obj.targetY = clientY - activeDrag.offsetY;
+    }
+
+    function endDrag(pointerId) {
+      if (!activeDrag || activeDrag.pointerId !== pointerId) {
+        return;
+      }
+      activeDrag.obj.el.classList.remove('dragging');
+      if (stage.hasPointerCapture(pointerId)) {
+        stage.releasePointerCapture(pointerId);
+      }
+      activeDrag = null;
+    }
+
+    stage.addEventListener('pointerdown', (event) => {
+      const target = event.target.closest('.draggable');
+      if (!target) {
+        return;
+      }
+
+      const obj = objects.find((o) => o.el === target);
+      if (obj) {
+        startDrag(obj, event.pointerId, event.clientX, event.clientY);
+      }
+    });
+
+    stage.addEventListener('pointermove', (event) => {
+      if (activeDrag) {
+        moveDrag(event.clientX, event.clientY);
+      }
+    });
+
+    stage.addEventListener('pointerup', (event) => {
+      endDrag(event.pointerId);
+    });
+
+    stage.addEventListener('pointercancel', (event) => {
+      endDrag(event.pointerId);
+    });
+
+    resetBtn.addEventListener('click', () => {
+      for (const obj of objects) {
+        obj.targetX = obj.initialX;
+        obj.targetY = obj.initialY;
+        obj.vx = 0;
+        obj.vy = 0;
+      }
+    });
+
+    for (let i = 0; i < configs.length; i++) {
+      createObject(configs[i], i);
+    }
+
+    animate();
+  </script>
+</body>
+</html>

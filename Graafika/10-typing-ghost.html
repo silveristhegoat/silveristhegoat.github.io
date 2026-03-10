@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graafika 10 - Typing Ghost</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+
+    :root {
+      --bg-1: #061224;
+      --bg-2: #0f2d3b;
+      --bg-3: #173951;
+      --ink: #e4f4ff;
+      --muted: #9ec0cf;
+      --accent: #ffe9a8;
+      --card: rgba(9, 20, 35, 0.55);
+      --card-border: rgba(185, 230, 252, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 10% 0%, #274f67 0%, transparent 35%),
+        radial-gradient(circle at 90% 85%, #0d5563 0%, transparent 45%),
+        linear-gradient(130deg, var(--bg-1), var(--bg-2) 45%, var(--bg-3));
+    }
+
+    .layout {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 1rem;
+    }
+
+    .panel {
+      width: min(920px, 100%);
+      border: 1px solid var(--card-border);
+      background: var(--card);
+      backdrop-filter: blur(8px);
+      border-radius: 0.8rem;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+      padding: clamp(1rem, 0.95rem + 1.6vw, 1.8rem);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1rem, 0.9rem + 1vw, 1.35rem);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    p {
+      margin: 0.4rem 0 1rem;
+      font-size: clamp(0.9rem, 0.86rem + 0.3vw, 0.98rem);
+      line-height: 1.45;
+      color: var(--muted);
+      font-weight: 500;
+      max-width: 66ch;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.7rem;
+      margin-bottom: 0.8rem;
+    }
+
+    #ghostInput {
+      border: 1px solid rgba(185, 230, 252, 0.32);
+      background: rgba(11, 27, 47, 0.72);
+      color: var(--ink);
+      border-radius: 0.65rem;
+      padding: 0.72rem 0.78rem;
+      font: inherit;
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    #ghostInput:focus {
+      border-color: rgba(255, 233, 168, 0.65);
+      box-shadow: 0 0 0 2px rgba(255, 233, 168, 0.15);
+    }
+
+    #clearBtn {
+      border: 1px solid rgba(199, 236, 254, 0.35);
+      background: rgba(21, 38, 66, 0.68);
+      color: var(--ink);
+      border-radius: 0.65rem;
+      padding: 0.7rem 0.88rem;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    #clearBtn:hover,
+    #clearBtn:focus-visible {
+      outline: none;
+      background: rgba(39, 66, 105, 0.72);
+      border-color: rgba(255, 233, 168, 0.58);
+    }
+
+    .output {
+      min-height: 220px;
+      border: 1px solid rgba(185, 230, 252, 0.24);
+      border-radius: 0.7rem;
+      background: rgba(8, 22, 38, 0.58);
+      padding: 0.9rem;
+      font-size: clamp(1rem, 0.92rem + 0.52vw, 1.35rem);
+      line-height: 1.55;
+      letter-spacing: 0.015em;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    .ghost-char {
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(0.9em) scale(0.98);
+      filter: blur(1.5px);
+    }
+
+    .ghost-char.reveal {
+      animation: riseIn 360ms cubic-bezier(0.16, 0.84, 0.3, 1) forwards;
+    }
+
+    .ghost-char.remove {
+      animation: fadeOut var(--remove-duration, 170ms) ease forwards;
+    }
+
+    .meta {
+      margin-top: 0.7rem;
+      font-size: 0.82rem;
+      color: var(--muted);
+      opacity: 0.95;
+    }
+
+    @keyframes riseIn {
+      0% {
+        opacity: 0;
+        transform: translateY(0.9em) scale(0.98);
+        filter: blur(1.5px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+      }
+    }
+
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+      to {
+        opacity: 0;
+        transform: translateY(0.4em) scale(0.95);
+      }
+    }
+
+    @media (max-width: 700px) {
+      .panel {
+        padding: 0.85rem;
+      }
+
+      .controls {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="layout">
+    <section class="panel">
+      <h1>Typing Ghost</h1>
+      <p>Type in the field and letters will appear with a short delay, smoothly rising from below like a ghost trail.</p>
+
+      <div class="controls">
+        <input id="ghostInput" type="text" autocomplete="off" spellcheck="false" placeholder="Type here..." />
+        <button id="clearBtn" type="button">Clear</button>
+      </div>
+
+      <div class="output" id="output" aria-live="polite"></div>
+      <div class="meta" id="meta">Delay: 90-280ms per character. Backspace removes with a soft fade.</div>
+    </section>
+  </main>
+
+  <script>
+    const input = document.getElementById('ghostInput');
+    const output = document.getElementById('output');
+    const clearBtn = document.getElementById('clearBtn');
+
+    const queue = [];
+    let rendering = false;
+    let displayedChars = [];
+    let lastDeleteAt = 0;
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function makeCharNode(ch) {
+      const span = document.createElement('span');
+      span.className = 'ghost-char';
+      span.textContent = ch === ' ' ? '\u00A0' : ch;
+      return span;
+    }
+
+    function wait(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    async function processQueue() {
+      if (rendering) {
+        return;
+      }
+
+      rendering = true;
+      while (queue.length > 0) {
+        const task = queue.shift();
+
+        if (task.type === 'add') {
+          await wait(task.delay);
+          const node = makeCharNode(task.char);
+          output.appendChild(node);
+          displayedChars.push(node);
+
+          requestAnimationFrame(() => {
+            node.classList.add('reveal');
+          });
+        }
+
+        if (task.type === 'remove') {
+          await wait(task.delay);
+          const node = displayedChars.pop();
+          if (node) {
+            node.style.setProperty('--remove-duration', `${task.fadeMs}ms`);
+            node.classList.add('remove');
+            await wait(task.fadeMs);
+            node.remove();
+          }
+        }
+
+        if (task.type === 'clear') {
+          output.textContent = '';
+          displayedChars = [];
+        }
+      }
+
+      rendering = false;
+    }
+
+    input.addEventListener('beforeinput', (event) => {
+      if (event.inputType === 'insertText' && event.data) {
+        for (const ch of event.data) {
+          queue.push({
+            type: 'add',
+            char: ch,
+            delay: Math.round(random(90, 280)),
+          });
+        }
+      }
+
+      if (event.inputType === 'insertLineBreak') {
+        queue.push({
+          type: 'add',
+          char: '\n',
+          delay: Math.round(random(90, 220)),
+        });
+      }
+
+      if (event.inputType === 'deleteContentBackward') {
+        const now = performance.now();
+        const delta = lastDeleteAt > 0 ? now - lastDeleteAt : 280;
+        lastDeleteAt = now;
+
+        // Faster repeated backspaces produce quicker disappearance.
+        const speedRatio = Math.max(0, Math.min(1, (280 - delta) / 240));
+        const removeDelay = Math.round(70 - speedRatio * 50);
+        const fadeMs = Math.round(170 - speedRatio * 105);
+
+        queue.push({
+          type: 'remove',
+          delay: removeDelay,
+          fadeMs,
+        });
+      }
+
+      processQueue();
+    });
+
+    clearBtn.addEventListener('click', () => {
+      queue.length = 0;
+      queue.push({ type: 'clear' });
+      input.value = '';
+      processQueue();
+      input.focus();
+    });
+
+    // Keep typing focus ready for immediate interaction.
+    input.focus();
+  </script>
+</body>
+</html>

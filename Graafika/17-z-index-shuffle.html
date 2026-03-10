@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graafika 17 - Z-Index Shuffle</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+
+    :root {
+      --bg-1: #061224;
+      --bg-2: #0f2d3b;
+      --bg-3: #173951;
+      --ink: #e4f4ff;
+      --muted: #9ec0cf;
+      --accent: #ffe9a8;
+      --card: rgba(9, 20, 35, 0.55);
+      --card-border: rgba(185, 230, 252, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 10% 0%, #274f67 0%, transparent 35%),
+        radial-gradient(circle at 90% 85%, #0d5563 0%, transparent 45%),
+        linear-gradient(130deg, var(--bg-1), var(--bg-2) 45%, var(--bg-3));
+    }
+
+    .panel {
+      position: fixed;
+      left: 1rem;
+      top: 1rem;
+      max-width: min(34rem, calc(100vw - 2rem));
+      padding: 0.9rem 1rem;
+      border: 1px solid var(--card-border);
+      background: var(--card);
+      backdrop-filter: blur(8px);
+      border-radius: 0.8rem;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+      z-index: 1000;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 0.35rem 0 0;
+      font-size: 0.92rem;
+      line-height: 1.4;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    #stage {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .card {
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border-radius: 1rem;
+      border: 2px solid rgba(185, 230, 252, 0.4);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 1rem;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    }
+
+    .card:hover {
+      transform: scale(1.05);
+      border-color: rgba(255, 233, 168, 0.7);
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+    }
+
+    .card:active {
+      transform: scale(0.98);
+    }
+
+    .card-label {
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+
+    .card-order {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    /* Individual card positions and colors */
+    .card.one {
+      left: 12%;
+      top: 20%;
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.75), rgba(37, 99, 235, 0.85));
+      z-index: 1;
+    }
+
+    .card.two {
+      left: 28%;
+      top: 32%;
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.75), rgba(124, 58, 237, 0.85));
+      z-index: 2;
+    }
+
+    .card.three {
+      left: 45%;
+      top: 18%;
+      background: linear-gradient(135deg, rgba(236, 72, 153, 0.75), rgba(219, 39, 119, 0.85));
+      z-index: 3;
+    }
+
+    .card.four {
+      right: 22%;
+      top: 28%;
+      background: linear-gradient(135deg, rgba(251, 146, 60, 0.75), rgba(249, 115, 22, 0.85));
+      z-index: 4;
+    }
+
+    .card.five {
+      left: 18%;
+      bottom: 22%;
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.75), rgba(22, 163, 74, 0.85));
+      z-index: 5;
+    }
+
+    .card.six {
+      left: 42%;
+      bottom: 18%;
+      background: linear-gradient(135deg, rgba(14, 165, 233, 0.75), rgba(2, 132, 199, 0.85));
+      z-index: 6;
+    }
+
+    .card.seven {
+      right: 15%;
+      bottom: 25%;
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.75), rgba(147, 51, 234, 0.85));
+      z-index: 7;
+    }
+
+    @media (max-width: 900px) {
+      .card {
+        width: 150px;
+        height: 150px;
+        font-size: 0.85rem;
+      }
+
+      .card-label {
+        font-size: 0.8rem;
+      }
+
+      .card-order {
+        font-size: 0.72rem;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .card {
+        width: 120px;
+        height: 120px;
+      }
+
+      .card-label {
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="panel" aria-live="polite">
+    <h1 class="title">Z-Index Shuffle</h1>
+    <p class="subtitle">Click any card to bring it to the foreground above all others.</p>
+  </section>
+
+  <div id="stage">
+    <div class="card one" data-card="1">
+      <div>
+        <div class="card-label">Card 1</div>
+        <div class="card-order">z-index: <span class="z-value">1</span></div>
+      </div>
+    </div>
+
+    <div class="card two" data-card="2">
+      <div>
+        <div class="card-label">Card 2</div>
+        <div class="card-order">z-index: <span class="z-value">2</span></div>
+      </div>
+    </div>
+
+    <div class="card three" data-card="3">
+      <div>
+        <div class="card-label">Card 3</div>
+        <div class="card-order">z-index: <span class="z-value">3</span></div>
+      </div>
+    </div>
+
+    <div class="card four" data-card="4">
+      <div>
+        <div class="card-label">Card 4</div>
+        <div class="card-order">z-index: <span class="z-value">4</span></div>
+      </div>
+    </div>
+
+    <div class="card five" data-card="5">
+      <div>
+        <div class="card-label">Card 5</div>
+        <div class="card-order">z-index: <span class="z-value">5</span></div>
+      </div>
+    </div>
+
+    <div class="card six" data-card="6">
+      <div>
+        <div class="card-label">Card 6</div>
+        <div class="card-order">z-index: <span class="z-value">6</span></div>
+      </div>
+    </div>
+
+    <div class="card seven" data-card="7">
+      <div>
+        <div class="card-label">Card 7</div>
+        <div class="card-order">z-index: <span class="z-value">7</span></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const cards = document.querySelectorAll('.card');
+    let topZ = 7; // Starting top z-index
+    
+    const activeCards = new Map(); // Track active drags by pointerId
+
+    cards.forEach(card => {
+      let isDragging = false;
+      let startX, startY, offsetX, offsetY;
+
+      card.addEventListener('pointerdown', (e) => {
+        isDragging = true;
+        
+        // Bring to front on interaction
+        topZ++;
+        card.style.zIndex = topZ;
+        const zValueDisplay = card.querySelector('.z-value');
+        if (zValueDisplay) {
+          zValueDisplay.textContent = topZ;
+        }
+
+        const rect = card.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+        
+        card.setPointerCapture(e.pointerId);
+        activeCards.set(e.pointerId, { card, offsetX, offsetY });
+        
+        e.preventDefault();
+      });
+
+      card.addEventListener('pointermove', (e) => {
+        const dragData = activeCards.get(e.pointerId);
+        if (!dragData) return;
+
+        const x = e.clientX - dragData.offsetX;
+        const y = e.clientY - dragData.offsetY;
+        
+        dragData.card.style.left = `${x}px`;
+        dragData.card.style.top = `${y}px`;
+      });
+
+      card.addEventListener('pointerup', (e) => {
+        activeCards.delete(e.pointerId);
+        isDragging = false;
+      });
+
+      card.addEventListener('pointercancel', (e) => {
+        activeCards.delete(e.pointerId);
+        isDragging = false;
+      });
+    });
+  </script>
+</body>
+</html>

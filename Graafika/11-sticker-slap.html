@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graafika 11 - Sticker Slap</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+
+    :root {
+      --bg-1: #061224;
+      --bg-2: #0f2d3b;
+      --bg-3: #173951;
+      --ink: #e4f4ff;
+      --muted: #9ec0cf;
+      --accent: #ffe9a8;
+      --card: rgba(9, 20, 35, 0.55);
+      --card-border: rgba(185, 230, 252, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 10% 0%, #274f67 0%, transparent 35%),
+        radial-gradient(circle at 90% 85%, #0d5563 0%, transparent 45%),
+        linear-gradient(130deg, var(--bg-1), var(--bg-2) 45%, var(--bg-3));
+    }
+
+    .panel {
+      position: fixed;
+      left: 1rem;
+      top: 1rem;
+      max-width: min(34rem, calc(100vw - 2rem));
+      padding: 0.9rem 1rem;
+      border: 1px solid var(--card-border);
+      background: var(--card);
+      backdrop-filter: blur(8px);
+      border-radius: 0.8rem;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 0.35rem 0 0;
+      font-size: 0.92rem;
+      line-height: 1.4;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .toolbar {
+      position: fixed;
+      right: 1rem;
+      top: 1rem;
+      display: flex;
+      gap: 0.55rem;
+      z-index: 4;
+    }
+
+    .tool-btn {
+      border: 1px solid rgba(199, 236, 254, 0.35);
+      background: rgba(21, 38, 66, 0.7);
+      color: var(--ink);
+      border-radius: 0.65rem;
+      padding: 0.62rem 0.82rem;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .tool-btn:hover,
+    .tool-btn:focus-visible {
+      outline: none;
+      background: rgba(39, 66, 105, 0.76);
+      border-color: rgba(255, 233, 168, 0.6);
+    }
+
+    #stage {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      overflow: hidden;
+      user-select: none;
+      touch-action: manipulation;
+    }
+
+    .sticker {
+      position: absolute;
+      width: 92px;
+      height: 92px;
+      border-radius: 0.9rem;
+      border: 2px solid rgba(255, 255, 255, 0.62);
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+      display: grid;
+      place-items: center;
+      color: #0f2435;
+      font-size: 1.7rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      transform-origin: center;
+      transform: translate(-50%, -50%) rotate(var(--r));
+      animation: slap 200ms cubic-bezier(0.2, 0.95, 0.25, 1);
+    }
+
+    .sticker::after {
+      content: attr(data-label);
+      position: absolute;
+      left: 7px;
+      right: 7px;
+      bottom: 7px;
+      text-align: center;
+      font-size: 0.62rem;
+      color: rgba(11, 29, 46, 0.82);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      opacity: 0.9;
+    }
+
+    @keyframes slap {
+      0% {
+        transform: translate(-50%, -50%) scale(0.2) rotate(var(--r));
+        opacity: 0;
+      }
+      65% {
+        transform: translate(-50%, -50%) scale(1.08) rotate(var(--r));
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1) rotate(var(--r));
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 700px) {
+      .panel {
+        left: 0.75rem;
+        top: 0.75rem;
+        padding: 0.75rem 0.85rem;
+      }
+
+      .subtitle {
+        font-size: 0.85rem;
+      }
+
+      .toolbar {
+        right: 0.75rem;
+        top: auto;
+        bottom: 0.75rem;
+      }
+
+      .sticker {
+        width: 80px;
+        height: 80px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="panel" aria-live="polite">
+    <h1 class="title">Sticker Slap</h1>
+    <p class="subtitle">Click anywhere to slap down a random sticker with a random rotation.</p>
+  </section>
+
+  <div class="toolbar">
+    <button id="clearBtn" class="tool-btn" type="button">Clear Stickers</button>
+  </div>
+
+  <div id="stage"></div>
+
+  <script>
+    const stage = document.getElementById('stage');
+    const clearBtn = document.getElementById('clearBtn');
+
+    const stickerTypes = [
+      { icon: '!', label: 'zap', bg: 'linear-gradient(140deg, #ffe9a8, #ffb347)' },
+      { icon: '*', label: 'spark', bg: 'linear-gradient(140deg, #b4f0ff, #63b6d7)' },
+      { icon: 'x', label: 'pixel', bg: 'linear-gradient(140deg, #d2c4ff, #98a2ff)' },
+      { icon: '+', label: 'boost', bg: 'linear-gradient(140deg, #c8ffd9, #7dd39c)' },
+      { icon: '#', label: 'noise', bg: 'linear-gradient(140deg, #ffd0d0, #ff8f8f)' },
+      { icon: 'o', label: 'orbit', bg: 'linear-gradient(140deg, #f8d3ff, #d092f0)' },
+    ];
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function pick(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function placeSticker(clientX, clientY) {
+      const sticker = pick(stickerTypes);
+      const el = document.createElement('div');
+      const rotation = `${random(-32, 32).toFixed(1)}deg`;
+      const jitterX = random(-10, 10);
+      const jitterY = random(-10, 10);
+
+      el.className = 'sticker';
+      el.textContent = sticker.icon;
+      el.dataset.label = sticker.label;
+      el.style.background = sticker.bg;
+      el.style.left = `${clientX + jitterX}px`;
+      el.style.top = `${clientY + jitterY}px`;
+      el.style.setProperty('--r', rotation);
+
+      stage.appendChild(el);
+
+      if (stage.childElementCount > 260) {
+        stage.removeChild(stage.firstElementChild);
+      }
+    }
+
+    stage.addEventListener('pointerdown', (event) => {
+      placeSticker(event.clientX, event.clientY);
+    });
+
+    clearBtn.addEventListener('click', () => {
+      stage.textContent = '';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graafika 15 - Hover Filter Swap</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+
+    :root {
+      --bg-1: #061224;
+      --bg-2: #0f2d3b;
+      --bg-3: #173951;
+      --ink: #e4f4ff;
+      --muted: #9ec0cf;
+      --accent: #ffe9a8;
+      --card: rgba(9, 20, 35, 0.55);
+      --card-border: rgba(185, 230, 252, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 10% 0%, #274f67 0%, transparent 35%),
+        radial-gradient(circle at 90% 85%, #0d5563 0%, transparent 45%),
+        linear-gradient(130deg, var(--bg-1), var(--bg-2) 45%, var(--bg-3));
+    }
+
+    .panel {
+      max-width: min(68rem, calc(100vw - 2rem));
+      margin: 1.5rem auto;
+      padding: 0.9rem 1rem;
+      border: 1px solid var(--card-border);
+      background: var(--card);
+      backdrop-filter: blur(8px);
+      border-radius: 0.8rem;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    .title {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 0.35rem 0 0;
+      font-size: 0.92rem;
+      line-height: 1.4;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      max-width: min(68rem, calc(100vw - 2rem));
+      margin: 2rem auto;
+      padding: 0 1rem 3rem;
+    }
+
+    .image-card {
+      position: relative;
+      border-radius: 0.8rem;
+      overflow: hidden;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.3);
+      background: rgba(12, 24, 40, 0.6);
+    }
+
+    .image-card img {
+      display: block;
+      width: 100%;
+      height: 320px;
+      object-fit: cover;
+      transition: filter 420ms cubic-bezier(0.33, 1, 0.68, 1), transform 420ms ease;
+    }
+
+    .image-card:hover img {
+      transform: scale(1.05);
+    }
+
+    .label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 0.65rem 0.85rem;
+      background: linear-gradient(to top, rgba(6, 18, 36, 0.92), transparent);
+      color: var(--ink);
+      font-size: 0.88rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+
+    /* Filter Effects */
+    .grayscale-to-neon img {
+      filter: grayscale(100%) brightness(0.9);
+    }
+
+    .grayscale-to-neon:hover img {
+      filter: grayscale(0%) saturate(200%) hue-rotate(280deg) brightness(1.2) contrast(1.3);
+    }
+
+    .normal-to-inverted img {
+      filter: brightness(1) contrast(1);
+    }
+
+    .normal-to-inverted:hover img {
+      filter: invert(100%) hue-rotate(180deg) saturate(1.5);
+    }
+
+    .sepia-to-vibrant img {
+      filter: sepia(100%) brightness(0.85) contrast(0.9);
+    }
+
+    .sepia-to-vibrant:hover img {
+      filter: sepia(0%) saturate(180%) hue-rotate(15deg) brightness(1.15) contrast(1.2);
+    }
+
+    .desaturate-to-neon img {
+      filter: saturate(0%) brightness(0.95);
+    }
+
+    .desaturate-to-neon:hover img {
+      filter: saturate(300%) hue-rotate(90deg) brightness(1.25) contrast(1.4);
+    }
+
+    .blur-to-sharp img {
+      filter: blur(3px) brightness(0.8) grayscale(60%);
+    }
+
+    .blur-to-sharp:hover img {
+      filter: blur(0) brightness(1.1) grayscale(0%) saturate(140%);
+    }
+
+    .dark-to-glow img {
+      filter: brightness(0.5) contrast(1.1) grayscale(40%);
+    }
+
+    .dark-to-glow:hover img {
+      filter: brightness(1.3) contrast(1.3) saturate(160%) hue-rotate(330deg);
+    }
+
+    @media (max-width: 700px) {
+      .gallery {
+        grid-template-columns: 1fr;
+        gap: 1.2rem;
+      }
+
+      .image-card img {
+        height: 280px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="panel" aria-live="polite">
+    <h1 class="title">Hover Filter Swap</h1>
+    <p class="subtitle">Move your cursor over each image to see its filter transform in real-time.</p>
+  </section>
+
+  <div class="gallery">
+    <figure class="image-card grayscale-to-neon">
+      <img src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=600&h=600&fit=crop" alt="Mountain landscape" />
+      <figcaption class="label">Grayscale → Neon</figcaption>
+    </figure>
+
+    <figure class="image-card normal-to-inverted">
+      <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=600&fit=crop" alt="Mountain vista" />
+      <figcaption class="label">Normal → Inverted</figcaption>
+    </figure>
+
+    <figure class="image-card sepia-to-vibrant">
+      <img src="https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=600&h=600&fit=crop" alt="Forest path" />
+      <figcaption class="label">Sepia → Vibrant</figcaption>
+    </figure>
+
+    <figure class="image-card desaturate-to-neon">
+      <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=600&h=600&fit=crop" alt="Foggy forest" />
+      <figcaption class="label">Desaturate → Neon</figcaption>
+    </figure>
+
+    <figure class="image-card blur-to-sharp">
+      <img src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=600&h=600&fit=crop" alt="Nature scene" />
+      <figcaption class="label">Blur → Sharp</figcaption>
+    </figure>
+
+    <figure class="image-card dark-to-glow">
+      <img src="https://images.unsplash.com/photo-1447752875215-b2761acb3c5d?w=600&h=600&fit=crop" alt="Flower field" />
+      <figcaption class="label">Dark → Glow</figcaption>
+    </figure>
+  </div>
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graafika 02 - Magnetic Buttons</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+
+    :root {
+      --bg-1: #061224;
+      --bg-2: #0f2d3b;
+      --bg-3: #173951;
+      --ink: #e4f4ff;
+      --muted: #9ec0cf;
+      --accent: #ffe9a8;
+      --card: rgba(9, 20, 35, 0.55);
+      --card-border: rgba(185, 230, 252, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 10% 0%, #274f67 0%, transparent 35%),
+        radial-gradient(circle at 90% 85%, #0d5563 0%, transparent 45%),
+        linear-gradient(130deg, var(--bg-1), var(--bg-2) 45%, var(--bg-3));
+    }
+
+    .layout {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 1rem;
+    }
+
+    .panel {
+      width: min(880px, 100%);
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 0.8rem;
+      padding: clamp(1rem, 0.95rem + 1.8vw, 2rem);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(8px);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1rem, 0.9rem + 1vw, 1.4rem);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    p {
+      margin: 0.4rem 0 1.2rem;
+      color: var(--muted);
+      font-size: clamp(0.9rem, 0.86rem + 0.3vw, 0.98rem);
+      line-height: 1.4;
+      max-width: 56ch;
+      font-weight: 500;
+    }
+
+    .button-wrap {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .magnetic {
+      --btn-grad-a: #1e3f63;
+      --btn-grad-b: #2c6a92;
+      --halo: rgba(64, 141, 199, 0.24);
+      appearance: none;
+      border: 1px solid rgba(199, 236, 254, 0.28);
+      border-radius: 0.7rem;
+      color: var(--ink);
+      font: inherit;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      padding: 0.82rem 0.95rem;
+      cursor: pointer;
+      background: linear-gradient(125deg, var(--btn-grad-a), var(--btn-grad-b));
+      box-shadow: 0 8px 22px var(--halo), inset 0 1px 0 rgba(255, 255, 255, 0.18);
+      transform: translate3d(0, 0, 0) scale(1);
+      transition: transform 150ms ease, filter 150ms ease, box-shadow 150ms ease;
+      will-change: transform;
+      touch-action: manipulation;
+    }
+
+    .magnetic[data-theme='fire'] {
+      --btn-grad-a: #4f3d1f;
+      --btn-grad-b: #81662f;
+      --halo: rgba(255, 233, 168, 0.2);
+    }
+
+    .magnetic[data-theme='mint'] {
+      --btn-grad-a: #1b4354;
+      --btn-grad-b: #21697e;
+      --halo: rgba(158, 192, 207, 0.25);
+    }
+
+    .magnetic[data-theme='berry'] {
+      --btn-grad-a: #2a3458;
+      --btn-grad-b: #3a5179;
+      --halo: rgba(101, 134, 173, 0.22);
+    }
+
+    .magnetic:hover,
+    .magnetic:focus-visible {
+      outline: none;
+      filter: brightness(1.06) saturate(1.06);
+    }
+
+    .note {
+      margin-top: 1rem;
+      font-size: 0.83rem;
+      color: var(--muted);
+      opacity: 0.95;
+    }
+
+    @media (max-width: 700px) {
+      .layout {
+        padding: 0.75rem;
+      }
+
+      .panel {
+        padding: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="layout">
+    <section class="panel">
+      <h1>Magnetic Buttons</h1>
+      <p>
+        Move the cursor near a button: it gets slightly attracted to your pointer and snaps back when you leave.
+      </p>
+
+      <div class="button-wrap">
+        <button class="magnetic" type="button">Get Started</button>
+        <button class="magnetic" type="button" data-theme="fire">Launch Demo</button>
+        <button class="magnetic" type="button" data-theme="mint">Read Docs</button>
+        <button class="magnetic" type="button" data-theme="berry">Contact Team</button>
+      </div>
+
+      <div class="note">Magnetic range and strength are tuned in JavaScript for easy experimentation.</div>
+    </section>
+  </main>
+
+  <script>
+    const buttons = Array.from(document.querySelectorAll('.magnetic'));
+
+    const config = {
+      influenceRadius: 140,
+      maxPull: 14,
+      baseScale: 1,
+      peakScale: 1.06,
+    };
+
+    function clamp(v, min, max) {
+      return Math.max(min, Math.min(max, v));
+    }
+
+    function resetButton(button) {
+      button.style.transform = 'translate3d(0, 0, 0) scale(1)';
+    }
+
+    function updateButton(button, pointerX, pointerY) {
+      const rect = button.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const dx = pointerX - centerX;
+      const dy = pointerY - centerY;
+      const distance = Math.hypot(dx, dy);
+
+      if (distance >= config.influenceRadius) {
+        resetButton(button);
+        return;
+      }
+
+      const strength = 1 - distance / config.influenceRadius;
+      const pullDistance = config.maxPull * strength;
+
+      // Normalize direction so pull stays proportional regardless of distance.
+      const nx = distance > 0 ? dx / distance : 0;
+      const ny = distance > 0 ? dy / distance : 0;
+
+      const tx = clamp(nx * pullDistance, -config.maxPull, config.maxPull);
+      const ty = clamp(ny * pullDistance, -config.maxPull, config.maxPull);
+      const scale = config.baseScale + (config.peakScale - config.baseScale) * strength;
+
+      button.style.transform = `translate3d(${tx.toFixed(2)}px, ${ty.toFixed(2)}px, 0) scale(${scale.toFixed(3)})`;
+    }
+
+    function onPointerMove(event) {
+      for (const button of buttons) {
+        updateButton(button, event.clientX, event.clientY);
+      }
+    }
+
+    function onPointerLeaveWindow() {
+      for (const button of buttons) {
+        resetButton(button);
+      }
+    }
+
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+    window.addEventListener('blur', onPointerLeaveWindow);
+    document.addEventListener('mouseleave', onPointerLeaveWindow);
+
+    for (const button of buttons) {
+      button.addEventListener('pointerleave', () => {
+        // On fast moves, this keeps buttons from getting stuck offset.
+        resetButton(button);
+      });
+    }
+  </script>
+</body>
+</html>

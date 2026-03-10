@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graafika 01 - Cursor Trail</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+
+    :root {
+      --bg-1: #061224;
+      --bg-2: #0f2d3b;
+      --bg-3: #173951;
+      --ink: #e4f4ff;
+      --muted: #9ec0cf;
+      --accent: #ffe9a8;
+      --card: rgba(9, 20, 35, 0.55);
+      --card-border: rgba(185, 230, 252, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 10% 0%, #274f67 0%, transparent 35%),
+        radial-gradient(circle at 90% 85%, #0d5563 0%, transparent 45%),
+        linear-gradient(130deg, var(--bg-1), var(--bg-2) 45%, var(--bg-3));
+    }
+
+    canvas {
+      position: fixed;
+      inset: 0;
+      display: block;
+    }
+
+    .panel {
+      position: fixed;
+      left: 1rem;
+      top: 1rem;
+      max-width: min(26rem, calc(100vw - 2rem));
+      padding: 0.9rem 1rem;
+      border: 1px solid var(--card-border);
+      background: var(--card);
+      backdrop-filter: blur(8px);
+      border-radius: 0.8rem;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    .title {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 0.35rem 0 0;
+      font-size: 0.92rem;
+      line-height: 1.4;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    @media (max-width: 700px) {
+      .panel {
+        left: 0.75rem;
+        top: 0.75rem;
+        padding: 0.75rem 0.85rem;
+      }
+
+      .subtitle {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="fx"></canvas>
+
+  <section class="panel" aria-live="polite">
+    <h1 class="title">Cursor Trail</h1>
+    <p class="subtitle">Move the cursor or drag a finger. Each motion emits fading geometric sparks.</p>
+  </section>
+
+  <script>
+    const canvas = document.getElementById('fx');
+    const ctx = canvas.getContext('2d');
+
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    let dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    const particles = [];
+    const shapes = ['circle', 'square', 'triangle', 'diamond'];
+
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
+
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(dpr, dpr);
+    }
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function pick(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function emit(x, y, amount = 6) {
+      for (let i = 0; i < amount; i++) {
+        const angle = random(0, Math.PI * 2);
+        const speed = random(0.35, 2.4);
+        particles.push({
+          x,
+          y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: random(4, 13),
+          spin: random(-0.045, 0.045),
+          rotation: random(0, Math.PI),
+          life: random(35, 80),
+          maxLife: random(35, 80),
+          shape: pick(shapes),
+          hue: random(168, 220),
+          sat: random(70, 96),
+          light: random(62, 76),
+        });
+      }
+
+      if (particles.length > 1400) {
+        particles.splice(0, particles.length - 1400);
+      }
+    }
+
+    function drawParticle(p) {
+      const alpha = p.life / p.maxLife;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rotation);
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = `hsl(${p.hue} ${p.sat}% ${p.light}%)`;
+
+      switch (p.shape) {
+        case 'circle': {
+          ctx.beginPath();
+          ctx.arc(0, 0, p.size * 0.5, 0, Math.PI * 2);
+          ctx.fill();
+          break;
+        }
+        case 'square': {
+          const s = p.size;
+          ctx.fillRect(-s * 0.5, -s * 0.5, s, s);
+          break;
+        }
+        case 'diamond': {
+          const s = p.size * 0.7;
+          ctx.beginPath();
+          ctx.moveTo(0, -s);
+          ctx.lineTo(s, 0);
+          ctx.lineTo(0, s);
+          ctx.lineTo(-s, 0);
+          ctx.closePath();
+          ctx.fill();
+          break;
+        }
+        case 'triangle': {
+          const s = p.size;
+          ctx.beginPath();
+          ctx.moveTo(0, -s * 0.65);
+          ctx.lineTo(s * 0.58, s * 0.42);
+          ctx.lineTo(-s * 0.58, s * 0.42);
+          ctx.closePath();
+          ctx.fill();
+          break;
+        }
+      }
+
+      ctx.restore();
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vx *= 0.985;
+        p.vy *= 0.985;
+        p.vy += 0.015;
+        p.rotation += p.spin;
+        p.life -= 1;
+
+        if (p.life <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        drawParticle(p);
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    function onPointerMove(event) {
+      emit(event.clientX, event.clientY, 8);
+    }
+
+    function onTouchMove(event) {
+      const touches = event.touches;
+      for (let i = 0; i < touches.length; i++) {
+        const t = touches[i];
+        emit(t.clientX, t.clientY, 5);
+      }
+      event.preventDefault();
+    }
+
+    window.addEventListener('resize', resize);
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+    window.addEventListener('touchmove', onTouchMove, { passive: false });
+
+    resize();
+    animate();
+  </script>
+</body>
+</html>

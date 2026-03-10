@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graafika 09 - Custom Cursor Shape</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+
+    :root {
+      --bg-1: #061224;
+      --bg-2: #0f2d3b;
+      --bg-3: #173951;
+      --ink: #e4f4ff;
+      --muted: #9ec0cf;
+      --accent: #ffe9a8;
+      --card: rgba(9, 20, 35, 0.55);
+      --card-border: rgba(185, 230, 252, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+      cursor: none;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 10% 0%, #274f67 0%, transparent 35%),
+        radial-gradient(circle at 90% 85%, #0d5563 0%, transparent 45%),
+        linear-gradient(130deg, var(--bg-1), var(--bg-2) 45%, var(--bg-3));
+    }
+
+    .panel {
+      position: fixed;
+      left: 1rem;
+      top: 1rem;
+      max-width: min(31rem, calc(100vw - 2rem));
+      padding: 0.9rem 1rem;
+      border: 1px solid var(--card-border);
+      background: var(--card);
+      backdrop-filter: blur(8px);
+      border-radius: 0.8rem;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+      z-index: 3;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 0.35rem 0 0;
+      font-size: 0.92rem;
+      line-height: 1.4;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .stage {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+    }
+
+    .shape {
+      position: absolute;
+      border: 1px solid rgba(185, 230, 252, 0.22);
+      background: rgba(12, 30, 52, 0.45);
+      border-radius: 0.75rem;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 10px 25px rgba(0, 0, 0, 0.2);
+    }
+
+    .shape.one {
+      width: 200px;
+      height: 200px;
+      left: 12%;
+      top: 18%;
+      background: radial-gradient(circle at 30% 30%, rgba(123, 201, 245, 0.25), rgba(11, 37, 62, 0.45) 70%);
+    }
+
+    .shape.two {
+      width: 240px;
+      height: 240px;
+      right: 11%;
+      top: 22%;
+      border-radius: 999px;
+      background: radial-gradient(circle at 35% 35%, rgba(255, 233, 168, 0.2), rgba(43, 61, 84, 0.45) 70%);
+    }
+
+    .shape.three {
+      width: 290px;
+      height: 160px;
+      left: 37%;
+      bottom: 11%;
+      background: radial-gradient(circle at 60% 40%, rgba(130, 192, 214, 0.22), rgba(22, 49, 76, 0.45) 70%);
+    }
+
+    .cursor {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 44px;
+      height: 44px;
+      z-index: 5;
+      pointer-events: none;
+      transform: translate3d(-100px, -100px, 0);
+      will-change: transform;
+    }
+
+    .cursor-core {
+      width: 100%;
+      height: 100%;
+      border-radius: 0.6rem;
+      border: 1px solid rgba(255, 233, 168, 0.7);
+      background: linear-gradient(135deg, rgba(111, 193, 236, 0.45), rgba(255, 233, 168, 0.22));
+      backdrop-filter: blur(2px);
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.28);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cursor-core::before,
+    .cursor-core::after {
+      content: '';
+      position: absolute;
+      background: rgba(228, 244, 255, 0.85);
+    }
+
+    .cursor-core::before {
+      width: 2px;
+      height: 70%;
+      left: 50%;
+      top: 15%;
+      transform: translateX(-50%);
+    }
+
+    .cursor-core::after {
+      height: 2px;
+      width: 70%;
+      top: 50%;
+      left: 15%;
+      transform: translateY(-50%);
+    }
+
+    .cursor-ring {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 68px;
+      height: 68px;
+      margin-left: -34px;
+      margin-top: -34px;
+      border-radius: 999px;
+      border: 1px solid rgba(185, 230, 252, 0.42);
+      pointer-events: none;
+      z-index: 4;
+      transform: translate3d(-120px, -120px, 0);
+      will-change: transform;
+      transition: border-color 120ms ease, box-shadow 120ms ease;
+    }
+
+    .cursor.is-clicking .cursor-core {
+      border-color: rgba(255, 233, 168, 0.95);
+      box-shadow: 0 0 0 2px rgba(255, 233, 168, 0.18), 0 8px 18px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.28);
+      filter: brightness(1.08);
+    }
+
+    .cursor-ring.is-clicking {
+      border-color: rgba(255, 233, 168, 0.85);
+      box-shadow: 0 0 0 4px rgba(255, 233, 168, 0.12);
+    }
+
+    @media (max-width: 700px) {
+      * {
+        cursor: auto;
+      }
+
+      .cursor,
+      .cursor-ring {
+        display: none;
+      }
+
+      .panel {
+        left: 0.75rem;
+        top: 0.75rem;
+        padding: 0.75rem 0.85rem;
+      }
+
+      .subtitle {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="panel" aria-live="polite">
+    <h1 class="title">Custom Cursor Shape</h1>
+    <p class="subtitle">The default cursor is replaced with a custom shape that rotates based on movement direction.</p>
+  </section>
+
+  <div class="stage" aria-hidden="true">
+    <div class="shape one"></div>
+    <div class="shape two"></div>
+    <div class="shape three"></div>
+  </div>
+
+  <div id="cursor" class="cursor" aria-hidden="true">
+    <div class="cursor-core"></div>
+  </div>
+  <div id="ring" class="cursor-ring" aria-hidden="true"></div>
+
+  <script>
+    const cursor = document.getElementById('cursor');
+    const ring = document.getElementById('ring');
+
+    let targetX = window.innerWidth * 0.5;
+    let targetY = window.innerHeight * 0.5;
+    let x = targetX;
+    let y = targetY;
+    let ringX = targetX;
+    let ringY = targetY;
+
+    let angle = 0;
+    let angleTarget = 0;
+
+    function normalizeAngle(a) {
+      let v = a;
+      while (v > Math.PI) {
+        v -= Math.PI * 2;
+      }
+      while (v < -Math.PI) {
+        v += Math.PI * 2;
+      }
+      return v;
+    }
+
+    function onPointerMove(event) {
+      const dx = event.clientX - targetX;
+      const dy = event.clientY - targetY;
+
+      targetX = event.clientX;
+      targetY = event.clientY;
+
+      if (Math.hypot(dx, dy) > 0.2) {
+        angleTarget = Math.atan2(dy, dx);
+      }
+    }
+
+    function animate() {
+      x += (targetX - x) * 0.3;
+      y += (targetY - y) * 0.3;
+
+      ringX += (targetX - ringX) * 0.16;
+      ringY += (targetY - ringY) * 0.16;
+
+      const delta = normalizeAngle(angleTarget - angle);
+      angle += delta * 0.22;
+
+      cursor.style.transform = `translate3d(${x - 22}px, ${y - 22}px, 0) rotate(${angle}rad)`;
+      ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
+
+      requestAnimationFrame(animate);
+    }
+
+    window.addEventListener('pointermove', onPointerMove, { passive: true });
+
+    let clickFxTimer = null;
+
+    window.addEventListener('pointerdown', () => {
+      cursor.classList.add('is-clicking');
+      ring.classList.add('is-clicking');
+
+      if (clickFxTimer) {
+        clearTimeout(clickFxTimer);
+      }
+
+      clickFxTimer = setTimeout(() => {
+        cursor.classList.remove('is-clicking');
+        ring.classList.remove('is-clicking');
+        clickFxTimer = null;
+      }, 110);
+    });
+
+    animate();
+  </script>
+</body>
+</html>

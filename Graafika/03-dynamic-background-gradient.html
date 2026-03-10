@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graafika 03 - Dynamic Background Gradient</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+
+    :root {
+      --bg-1: #061224;
+      --bg-2: #0f2d3b;
+      --bg-3: #173951;
+      --ink: #e4f4ff;
+      --muted: #9ec0cf;
+      --accent: #ffe9a8;
+      --card: rgba(9, 20, 35, 0.55);
+      --card-border: rgba(185, 230, 252, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--ink);
+      overflow: hidden;
+      background: radial-gradient(circle at 10% 0%, #274f67 0%, transparent 35%),
+        radial-gradient(circle at 90% 85%, #0d5563 0%, transparent 45%),
+        linear-gradient(130deg, var(--bg-1), var(--bg-2) 45%, var(--bg-3));
+    }
+
+    .bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      transition: background 180ms linear;
+    }
+
+    .layout {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 1rem;
+    }
+
+    .panel {
+      width: min(860px, 100%);
+      border: 1px solid var(--card-border);
+      background: var(--card);
+      backdrop-filter: blur(8px);
+      border-radius: 0.8rem;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+      padding: clamp(1rem, 0.95rem + 1.6vw, 1.8rem);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1rem, 0.9rem + 1vw, 1.35rem);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    p {
+      margin: 0.4rem 0 0.95rem;
+      font-size: clamp(0.9rem, 0.86rem + 0.3vw, 0.98rem);
+      line-height: 1.45;
+      color: var(--muted);
+      font-weight: 500;
+      max-width: 65ch;
+    }
+
+    .hint {
+      margin-top: 0.8rem;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(100px, 1fr));
+      gap: 0.55rem;
+    }
+
+    .hint div {
+      border: 1px solid rgba(185, 230, 252, 0.2);
+      background: rgba(10, 24, 42, 0.55);
+      border-radius: 0.6rem;
+      padding: 0.5rem 0.6rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .status {
+      margin-top: 0.8rem;
+      font-size: 0.83rem;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    @media (max-width: 700px) {
+      .layout {
+        padding: 0.75rem;
+      }
+
+      .panel {
+        padding: 0.85rem;
+      }
+
+      .hint {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg" id="bg"></div>
+
+  <main class="layout">
+    <section class="panel">
+      <h1>Dynamic Background Gradient</h1>
+      <p>
+        Move your cursor across the screen. The background color blend smoothly reacts based on proximity to each corner.
+      </p>
+
+      <div class="hint">
+        <div><strong>Top-left:</strong> deep cyan tone</div>
+        <div><strong>Top-right:</strong> steel blue tone</div>
+        <div><strong>Bottom-left:</strong> ocean teal tone</div>
+        <div><strong>Bottom-right:</strong> slate-indigo tone</div>
+      </div>
+
+      <div class="status" id="status">Active corner: top-left</div>
+    </section>
+  </main>
+
+  <script>
+    const bg = document.getElementById('bg');
+    const status = document.getElementById('status');
+
+    const corners = {
+      tl: { x: 0, y: 0, name: 'top-left' },
+      tr: { x: 1, y: 0, name: 'top-right' },
+      bl: { x: 0, y: 1, name: 'bottom-left' },
+      br: { x: 1, y: 1, name: 'bottom-right' },
+    };
+
+    // Two color sets are blended using corner weights to keep movement smooth.
+    const setA = {
+      tl: [39, 79, 103],
+      tr: [37, 64, 94],
+      bl: [14, 85, 99],
+      br: [34, 58, 94],
+    };
+
+    const setB = {
+      tl: [8, 39, 64],
+      tr: [12, 45, 72],
+      bl: [7, 54, 71],
+      br: [23, 47, 81],
+    };
+
+    let targetX = 0.2;
+    let targetY = 0.2;
+    let currentX = 0.2;
+    let currentY = 0.2;
+
+    function clamp01(v) {
+      return Math.max(0, Math.min(1, v));
+    }
+
+    function toCss(rgb, alpha = 1) {
+      return `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})`;
+    }
+
+    function weightedColor(colors, weights) {
+      const r =
+        colors.tl[0] * weights.tl +
+        colors.tr[0] * weights.tr +
+        colors.bl[0] * weights.bl +
+        colors.br[0] * weights.br;
+      const g =
+        colors.tl[1] * weights.tl +
+        colors.tr[1] * weights.tr +
+        colors.bl[1] * weights.bl +
+        colors.br[1] * weights.br;
+      const b =
+        colors.tl[2] * weights.tl +
+        colors.tr[2] * weights.tr +
+        colors.bl[2] * weights.bl +
+        colors.br[2] * weights.br;
+
+      return [Math.round(r), Math.round(g), Math.round(b)];
+    }
+
+    function weightsFor(x, y) {
+      return {
+        tl: (1 - x) * (1 - y),
+        tr: x * (1 - y),
+        bl: (1 - x) * y,
+        br: x * y,
+      };
+    }
+
+    function nearestCornerName(x, y) {
+      let nearest = corners.tl;
+      let bestDistance = Infinity;
+      for (const key of Object.keys(corners)) {
+        const c = corners[key];
+        const d = Math.hypot(x - c.x, y - c.y);
+        if (d < bestDistance) {
+          bestDistance = d;
+          nearest = c;
+        }
+      }
+      return nearest.name;
+    }
+
+    function updateTarget(clientX, clientY) {
+      targetX = clamp01(clientX / Math.max(window.innerWidth, 1));
+      targetY = clamp01(clientY / Math.max(window.innerHeight, 1));
+    }
+
+    function render() {
+      currentX += (targetX - currentX) * 0.085;
+      currentY += (targetY - currentY) * 0.085;
+
+      const weights = weightsFor(currentX, currentY);
+      const color1 = weightedColor(setA, weights);
+      const color2 = weightedColor(setB, weights);
+
+      const shiftX = 10 + currentX * 80;
+      const shiftY = 5 + currentY * 80;
+
+      bg.style.background = `
+        radial-gradient(circle at ${shiftX}% ${shiftY * 0.55}%, ${toCss(color1, 0.95)} 0%, transparent 38%),
+        radial-gradient(circle at ${100 - shiftX}% ${100 - shiftY * 0.8}%, ${toCss(color2, 0.88)} 0%, transparent 44%),
+        linear-gradient(130deg, #061224, #0f2d3b 45%, #173951)
+      `;
+
+      status.textContent = `Active corner: ${nearestCornerName(currentX, currentY)}`;
+      requestAnimationFrame(render);
+    }
+
+    window.addEventListener('pointermove', (event) => {
+      updateTarget(event.clientX, event.clientY);
+    }, { passive: true });
+
+    window.addEventListener('touchmove', (event) => {
+      if (event.touches.length > 0) {
+        const t = event.touches[0];
+        updateTarget(t.clientX, t.clientY);
+      }
+    }, { passive: true });
+
+    render();
+  </script>
+</body>
+</html>

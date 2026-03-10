@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graafika 05 - Scroll-Driven Scaling</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+
+    :root {
+      --bg-1: #061224;
+      --bg-2: #0f2d3b;
+      --bg-3: #173951;
+      --ink: #e4f4ff;
+      --muted: #9ec0cf;
+      --accent: #ffe9a8;
+      --card: rgba(9, 20, 35, 0.55);
+      --card-border: rgba(185, 230, 252, 0.18);
+      --progress: 0;
+      --scale: 0.8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 10% 0%, #274f67 0%, transparent 35%),
+        radial-gradient(circle at 90% 85%, #0d5563 0%, transparent 45%),
+        linear-gradient(130deg, var(--bg-1), var(--bg-2) 45%, var(--bg-3));
+    }
+
+    .page {
+      min-height: 260vh;
+      position: relative;
+      overflow-x: clip;
+    }
+
+    .hud {
+      position: fixed;
+      z-index: 3;
+      top: 1rem;
+      left: 1rem;
+      width: min(26rem, calc(100vw - 2rem));
+      border: 1px solid var(--card-border);
+      background: var(--card);
+      backdrop-filter: blur(8px);
+      border-radius: 0.8rem;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+      padding: 0.85rem 0.95rem;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 0.32rem 0 0.65rem;
+      font-size: 0.91rem;
+      line-height: 1.4;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .meter {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(185, 230, 252, 0.28);
+      background: rgba(8, 20, 36, 0.72);
+      overflow: hidden;
+    }
+
+    .meter > span {
+      display: block;
+      width: calc(var(--progress) * 100%);
+      height: 100%;
+      background: linear-gradient(90deg, #5fa8d3, #ffe9a8);
+      transition: width 80ms linear;
+    }
+
+    .scale-readout {
+      margin-top: 0.45rem;
+      font-size: 0.82rem;
+      color: var(--accent);
+    }
+
+    .stage {
+      position: sticky;
+      top: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 1rem;
+    }
+
+    .scene {
+      width: min(92vw, 1050px);
+      aspect-ratio: 16 / 10;
+      border: 1px solid var(--card-border);
+      border-radius: 1rem;
+      background: rgba(6, 18, 33, 0.52);
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: blur(5px);
+      box-shadow: 0 24px 55px rgba(0, 0, 0, 0.32);
+    }
+
+    .grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(168, 216, 245, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(168, 216, 245, 0.08) 1px, transparent 1px);
+      background-size: 36px 36px;
+      opacity: 0.9;
+      transform: scale(calc(0.9 + var(--progress) * 0.25));
+      transform-origin: center;
+      transition: transform 100ms linear;
+    }
+
+    .blob {
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(1px);
+      mix-blend-mode: screen;
+      transform-origin: center;
+      transition: transform 100ms linear;
+    }
+
+    .blob.one {
+      width: 220px;
+      height: 220px;
+      left: 10%;
+      top: 16%;
+      background: radial-gradient(circle at 30% 30%, rgba(122, 204, 255, 0.92), rgba(21, 108, 159, 0.15) 74%);
+      transform: scale(calc(0.65 + var(--progress) * 1.2));
+    }
+
+    .blob.two {
+      width: 280px;
+      height: 280px;
+      right: 9%;
+      top: 12%;
+      background: radial-gradient(circle at 40% 45%, rgba(255, 233, 168, 0.88), rgba(132, 101, 41, 0.16) 76%);
+      transform: scale(calc(1.2 - var(--progress) * 0.6));
+    }
+
+    .blob.three {
+      width: 240px;
+      height: 240px;
+      left: 40%;
+      bottom: 8%;
+      background: radial-gradient(circle at 45% 35%, rgba(146, 196, 211, 0.86), rgba(36, 93, 118, 0.16) 74%);
+      transform: scale(calc(0.8 + var(--progress) * 0.95));
+    }
+
+    .card {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(var(--scale));
+      width: min(76%, 620px);
+      border: 1px solid var(--card-border);
+      border-radius: 0.85rem;
+      background: rgba(10, 24, 40, 0.72);
+      backdrop-filter: blur(7px);
+      box-shadow: 0 14px 38px rgba(0, 0, 0, 0.3);
+      padding: clamp(0.9rem, 0.8rem + 1vw, 1.35rem);
+      transition: transform 100ms linear;
+    }
+
+    .card h2 {
+      margin: 0;
+      font-size: clamp(0.95rem, 0.87rem + 0.45vw, 1.2rem);
+      color: var(--accent);
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .card p {
+      margin: 0.45rem 0 0;
+      color: var(--muted);
+      line-height: 1.45;
+      font-size: clamp(0.82rem, 0.78rem + 0.28vw, 0.97rem);
+      font-weight: 500;
+    }
+
+    @media (max-width: 700px) {
+      .hud {
+        left: 0.75rem;
+        top: 0.75rem;
+        padding: 0.72rem 0.82rem;
+      }
+
+      .scene {
+        aspect-ratio: 4 / 5;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page" id="page">
+    <section class="hud" aria-live="polite">
+      <h1 class="title">Scroll-Driven Scaling</h1>
+      <p class="subtitle">Scroll down and watch elements grow or shrink based on page scroll progress.</p>
+      <div class="meter" aria-hidden="true"><span></span></div>
+      <div class="scale-readout" id="readout">Scale factor: 0.80x</div>
+    </section>
+
+    <section class="stage">
+      <div class="scene">
+        <div class="grid"></div>
+        <div class="blob one"></div>
+        <div class="blob two"></div>
+        <div class="blob three"></div>
+        <article class="card">
+          <h2>Scroll Controls Scale</h2>
+          <p>
+            This panel scales up while one blob shrinks and others expand. The motion is driven by normalized
+            scroll progress from the top to the bottom of the page.
+          </p>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const root = document.documentElement;
+    const readout = document.getElementById('readout');
+
+    function clamp01(v) {
+      return Math.max(0, Math.min(1, v));
+    }
+
+    function updateFromScroll() {
+      const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+      const progress = clamp01(window.scrollY / maxScroll);
+
+      // Keep scale range readable while still noticeably reactive.
+      const scale = 0.8 + progress * 0.85;
+
+      root.style.setProperty('--progress', progress.toFixed(4));
+      root.style.setProperty('--scale', scale.toFixed(3));
+      readout.textContent = `Scale factor: ${scale.toFixed(2)}x`;
+    }
+
+    window.addEventListener('scroll', updateFromScroll, { passive: true });
+    window.addEventListener('resize', updateFromScroll);
+    updateFromScroll();
+  </script>
+</body>
+</html>

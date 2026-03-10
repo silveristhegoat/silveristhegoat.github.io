@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graafika 12 - Color Splash</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+
+    :root {
+      --bg-1: #061224;
+      --bg-2: #0f2d3b;
+      --bg-3: #173951;
+      --ink: #e4f4ff;
+      --muted: #9ec0cf;
+      --accent: #ffe9a8;
+      --card: rgba(9, 20, 35, 0.55);
+      --card-border: rgba(185, 230, 252, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 10% 0%, #274f67 0%, transparent 35%),
+        radial-gradient(circle at 90% 85%, #0d5563 0%, transparent 45%),
+        linear-gradient(130deg, var(--bg-1), var(--bg-2) 45%, var(--bg-3));
+    }
+
+    #stage {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      z-index: 1;
+      touch-action: none;
+    }
+
+    .panel {
+      position: fixed;
+      left: 1rem;
+      top: 1rem;
+      max-width: min(34rem, calc(100vw - 2rem));
+      padding: 0.9rem 1rem;
+      border: 1px solid var(--card-border);
+      background: var(--card);
+      backdrop-filter: blur(8px);
+      border-radius: 0.8rem;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+      z-index: 4;
+      pointer-events: none;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 0.35rem 0 0;
+      font-size: 0.92rem;
+      line-height: 1.4;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    .splash {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      transform: translate(-50%, -50%) scale(1);
+      pointer-events: none;
+      opacity: 0.95;
+      mix-blend-mode: screen;
+      border: 1px solid rgba(255, 255, 255, 0.36);
+      box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.14), 0 12px 40px rgba(0, 0, 0, 0.25);
+      transition: opacity 260ms ease;
+    }
+
+    .splash::before {
+      content: '';
+      position: absolute;
+      inset: -20%;
+      border-radius: inherit;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.32) 0%, transparent 62%);
+      filter: blur(2px);
+      pointer-events: none;
+    }
+
+    .splash.fade {
+      opacity: 0;
+    }
+
+    @media (max-width: 700px) {
+      .panel {
+        left: 0.75rem;
+        top: 0.75rem;
+        padding: 0.75rem 0.85rem;
+      }
+
+      .subtitle {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="panel" aria-live="polite">
+    <h1 class="title">Color Splash</h1>
+    <p class="subtitle">Press and hold to grow a glowing color spot under the cursor. Release to fade it out.</p>
+  </section>
+
+  <div id="stage"></div>
+
+  <script>
+    const stage = document.getElementById('stage');
+
+    const activeSplashes = new Map();
+    const palettes = [
+      { h1: 188, h2: 222, h3: 254 },
+      { h1: 320, h2: 346, h3: 12 },
+      { h1: 148, h2: 178, h3: 205 },
+      { h1: 36, h2: 58, h3: 84 },
+      { h1: 265, h2: 294, h3: 324 },
+      { h1: 95, h2: 126, h3: 156 },
+    ];
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function pick(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function createSplash(id, x, y) {
+      const palette = pick(palettes);
+      const hueA = (palette.h1 + random(-10, 10) + 360) % 360;
+      const hueB = (palette.h2 + random(-12, 12) + 360) % 360;
+      const hueC = (palette.h3 + random(-14, 14) + 360) % 360;
+      const satA = random(72, 98);
+      const satB = random(66, 95);
+      const satC = random(58, 88);
+      const lightA = random(66, 82);
+      const lightB = random(52, 70);
+      const lightC = random(30, 48);
+
+      const el = document.createElement('div');
+      el.className = 'splash';
+      el.style.left = `${x}px`;
+      el.style.top = `${y}px`;
+      el.style.background = `radial-gradient(circle, hsla(${hueA.toFixed(0)}, ${satA.toFixed(0)}%, ${lightA.toFixed(0)}%, 0.95) 0%, hsla(${hueB.toFixed(0)}, ${satB.toFixed(0)}%, ${lightB.toFixed(0)}%, 0.62) 42%, hsla(${hueC.toFixed(0)}, ${satC.toFixed(0)}%, ${lightC.toFixed(0)}%, 0.2) 100%)`;
+
+      stage.appendChild(el);
+
+      const splash = {
+        id,
+        el,
+        x,
+        y,
+        scale: 1,
+        growth: random(0.02, 0.055),
+        maxScale: random(4.2, 10.5),
+        alive: true,
+      };
+
+      activeSplashes.set(id, splash);
+    }
+
+    function endSplash(id) {
+      const splash = activeSplashes.get(id);
+      if (!splash) {
+        return;
+      }
+
+      splash.alive = false;
+      splash.el.classList.add('fade');
+      const el = splash.el;
+      activeSplashes.delete(id);
+      setTimeout(() => {
+        el.remove();
+      }, 260);
+    }
+
+    function setSplashPosition(id, x, y) {
+      const splash = activeSplashes.get(id);
+      if (!splash) {
+        return;
+      }
+      splash.x = x;
+      splash.y = y;
+      splash.el.style.left = `${x}px`;
+      splash.el.style.top = `${y}px`;
+    }
+
+    function animate() {
+      for (const splash of activeSplashes.values()) {
+        if (!splash.alive) {
+          continue;
+        }
+
+        splash.scale = Math.min(splash.maxScale, splash.scale + splash.growth);
+        splash.el.style.transform = `translate(-50%, -50%) scale(${splash.scale.toFixed(3)})`;
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    stage.addEventListener('pointerdown', (event) => {
+      createSplash(event.pointerId, event.clientX, event.clientY);
+      stage.setPointerCapture(event.pointerId);
+    });
+
+    stage.addEventListener('pointermove', (event) => {
+      if (activeSplashes.has(event.pointerId)) {
+        setSplashPosition(event.pointerId, event.clientX, event.clientY);
+      }
+    });
+
+    stage.addEventListener('pointerup', (event) => {
+      endSplash(event.pointerId);
+      if (stage.hasPointerCapture(event.pointerId)) {
+        stage.releasePointerCapture(event.pointerId);
+      }
+    });
+
+    stage.addEventListener('pointercancel', (event) => {
+      endSplash(event.pointerId);
+    });
+
+    animate();
+  </script>
+</body>
+</html>

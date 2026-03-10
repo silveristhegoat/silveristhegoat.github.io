@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graafika 14 - Auto-Chaos Rotation</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+
+    :root {
+      --bg-1: #061224;
+      --bg-2: #0f2d3b;
+      --bg-3: #173951;
+      --ink: #e4f4ff;
+      --muted: #9ec0cf;
+      --accent: #ffe9a8;
+      --card: rgba(9, 20, 35, 0.55);
+      --card-border: rgba(185, 230, 252, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 10% 0%, #274f67 0%, transparent 35%),
+        radial-gradient(circle at 90% 85%, #0d5563 0%, transparent 45%),
+        linear-gradient(130deg, var(--bg-1), var(--bg-2) 45%, var(--bg-3));
+    }
+
+    .panel {
+      position: fixed;
+      left: 1rem;
+      top: 1rem;
+      max-width: min(34rem, calc(100vw - 2rem));
+      padding: 0.9rem 1rem;
+      border: 1px solid var(--card-border);
+      background: var(--card);
+      backdrop-filter: blur(8px);
+      border-radius: 0.8rem;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+      z-index: 4;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 0.35rem 0 0;
+      font-size: 0.92rem;
+      line-height: 1.4;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    #stage {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .floater {
+      position: absolute;
+      border-radius: 0.75rem;
+      border: 1px solid rgba(185, 230, 252, 0.35);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+      display: grid;
+      place-items: center;
+      color: var(--ink);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      user-select: none;
+    }
+
+    .floater.one {
+      width: 140px;
+      height: 140px;
+      left: 15%;
+      top: 22%;
+      background: linear-gradient(125deg, rgba(45, 78, 108, 0.72), rgba(34, 60, 84, 0.82));
+      animation: spinSlow 28s linear infinite, drift 14s ease-in-out infinite;
+    }
+
+    .floater.two {
+      width: 110px;
+      height: 110px;
+      left: 42%;
+      top: 18%;
+      background: linear-gradient(135deg, rgba(64, 99, 130, 0.7), rgba(48, 76, 102, 0.82));
+      animation: spinMedium 18s linear infinite reverse, drift 11s ease-in-out infinite 1s;
+    }
+
+    .floater.three {
+      width: 160px;
+      height: 160px;
+      right: 12%;
+      top: 28%;
+      background: linear-gradient(145deg, rgba(52, 85, 116, 0.68), rgba(38, 66, 92, 0.8));
+      animation: spinFast 12s linear infinite, drift 16s ease-in-out infinite 2s;
+    }
+
+    .floater.four {
+      width: 95px;
+      height: 95px;
+      left: 20%;
+      bottom: 24%;
+      background: linear-gradient(155deg, rgba(70, 108, 142, 0.72), rgba(54, 84, 112, 0.82));
+      animation: spinMedium 22s linear infinite, drift 13s ease-in-out infinite 3s;
+    }
+
+    .floater.five {
+      width: 130px;
+      height: 130px;
+      left: 52%;
+      bottom: 18%;
+      background: linear-gradient(165deg, rgba(58, 92, 122, 0.7), rgba(42, 72, 98, 0.8));
+      animation: spinSlow 32s linear infinite reverse, drift 15s ease-in-out infinite 4s;
+    }
+
+    .floater.six {
+      width: 105px;
+      height: 105px;
+      right: 18%;
+      bottom: 26%;
+      background: linear-gradient(175deg, rgba(48, 80, 110, 0.68), rgba(36, 62, 86, 0.8));
+      animation: spinFast 15s linear infinite reverse, drift 12s ease-in-out infinite 5s;
+    }
+
+    @keyframes spinSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes spinMedium {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes spinFast {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes drift {
+      0%, 100% {
+        transform: translate(0, 0) rotate(0deg);
+      }
+      25% {
+        transform: translate(12px, -8px) rotate(90deg);
+      }
+      50% {
+        transform: translate(-8px, 10px) rotate(180deg);
+      }
+      75% {
+        transform: translate(10px, 6px) rotate(270deg);
+      }
+    }
+
+    @media (max-width: 700px) {
+      .panel {
+        left: 0.75rem;
+        top: 0.75rem;
+        padding: 0.75rem 0.85rem;
+      }
+
+      .subtitle {
+        font-size: 0.85rem;
+      }
+
+      .floater {
+        transform: scale(0.8);
+      }
+    }
+  </style>
+</head>
+<body>
+  <section class="panel" aria-live="polite">
+    <h1 class="title">Auto-Chaos Rotation</h1>
+    <p class="subtitle">All elements rotate continuously at different speeds, creating a lively floating interface.</p>
+  </section>
+
+  <div id="stage">
+    <div class="floater one">Slow Spin</div>
+    <div class="floater two">Medium Rev</div>
+    <div class="floater three">Fast Cycle</div>
+    <div class="floater four">Medium Drift</div>
+    <div class="floater five">Slow Float</div>
+    <div class="floater six">Fast Orbit</div>
+  </div>
+</body>
+</html>

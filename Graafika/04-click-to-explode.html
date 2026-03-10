@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graafika 04 - Click to Explode</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+
+    :root {
+      --bg-1: #061224;
+      --bg-2: #0f2d3b;
+      --bg-3: #173951;
+      --ink: #e4f4ff;
+      --muted: #9ec0cf;
+      --accent: #ffe9a8;
+      --card: rgba(9, 20, 35, 0.55);
+      --card-border: rgba(185, 230, 252, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 10% 0%, #274f67 0%, transparent 35%),
+        radial-gradient(circle at 90% 85%, #0d5563 0%, transparent 45%),
+        linear-gradient(130deg, var(--bg-1), var(--bg-2) 45%, var(--bg-3));
+    }
+
+    canvas {
+      position: fixed;
+      inset: 0;
+      display: block;
+    }
+
+    .panel {
+      position: fixed;
+      left: 1rem;
+      top: 1rem;
+      max-width: min(29rem, calc(100vw - 2rem));
+      padding: 0.9rem 1rem;
+      border: 1px solid var(--card-border);
+      background: var(--card);
+      backdrop-filter: blur(8px);
+      border-radius: 0.8rem;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+      z-index: 2;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .subtitle {
+      margin: 0.35rem 0 0;
+      font-size: 0.92rem;
+      line-height: 1.4;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    @media (max-width: 700px) {
+      .panel {
+        left: 0.75rem;
+        top: 0.75rem;
+        padding: 0.75rem 0.85rem;
+      }
+
+      .subtitle {
+        font-size: 0.85rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="fx"></canvas>
+
+  <section class="panel" aria-live="polite">
+    <h1 class="title">Click-to-Explode</h1>
+    <p class="subtitle">Click or tap anywhere to launch circles and icons in all directions.</p>
+  </section>
+
+  <script>
+    const canvas = document.getElementById('fx');
+    const ctx = canvas.getContext('2d');
+
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    let dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    const particles = [];
+    const symbols = ['+', 'x', '*', 'o', '#'];
+
+    function resize() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = width + 'px';
+      canvas.style.height = height + 'px';
+
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(dpr, dpr);
+    }
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function pick(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function burst(x, y) {
+      const amount = 54;
+
+      for (let i = 0; i < amount; i++) {
+        const angle = random(0, Math.PI * 2);
+        const speed = random(1.4, 5.8);
+        const isIcon = Math.random() < 0.32;
+
+        particles.push({
+          x,
+          y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed,
+          size: random(4, 13),
+          life: random(40, 84),
+          maxLife: random(40, 84),
+          rotation: random(0, Math.PI * 2),
+          spin: random(-0.18, 0.18),
+          hue: random(170, 226),
+          sat: random(70, 96),
+          light: random(62, 78),
+          isIcon,
+          symbol: pick(symbols),
+        });
+      }
+
+      if (particles.length > 2200) {
+        particles.splice(0, particles.length - 2200);
+      }
+    }
+
+    function drawParticle(p) {
+      const alpha = p.life / p.maxLife;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rotation);
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = `hsl(${p.hue} ${p.sat}% ${p.light}%)`;
+      ctx.strokeStyle = `hsl(${p.hue} ${p.sat}% ${Math.min(p.light + 8, 95)}%)`;
+      ctx.lineWidth = 1.25;
+
+      if (p.isIcon) {
+        ctx.font = `${Math.max(10, p.size * 1.2)}px Space Grotesk`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(p.symbol, 0, 0);
+      } else {
+        ctx.beginPath();
+        ctx.arc(0, 0, p.size * 0.45, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      }
+
+      ctx.restore();
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vx *= 0.985;
+        p.vy *= 0.985;
+        p.vy += 0.042;
+        p.rotation += p.spin;
+        p.life -= 1;
+
+        if (p.life <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        drawParticle(p);
+      }
+
+      requestAnimationFrame(animate);
+    }
+
+    function explodeAt(clientX, clientY) {
+      burst(clientX, clientY);
+    }
+
+    window.addEventListener('resize', resize);
+    window.addEventListener('pointerdown', (event) => {
+      explodeAt(event.clientX, event.clientY);
+    });
+
+    window.addEventListener('touchstart', (event) => {
+      for (let i = 0; i < event.changedTouches.length; i++) {
+        const touch = event.changedTouches[i];
+        explodeAt(touch.clientX, touch.clientY);
+      }
+    }, { passive: true });
+
+    resize();
+    animate();
+
+    // Seed one subtle burst on load so users instantly see the effect.
+    burst(width * 0.5, height * 0.6);
+  </script>
+</body>
+</html>
