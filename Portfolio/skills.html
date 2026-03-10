@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Skills - Rafael Developer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const links = document.querySelectorAll('a');
+        links.forEach(link => {
+          if (link.hostname === location.hostname) {
+            link.addEventListener('click', function(e) {
+              const href = this.getAttribute('href');
+              if (!href || href.startsWith('#')) return;
+              e.preventDefault();
+              document.body.classList.add('fade-out');
+              setTimeout(() => { window.location = href; }, 400);
+            });
+          }
+        });
+      });
+    </script>
+</head>
+<body>
+
+<header>
+    <nav class="nav">
+        <div class="brand">Digikangelane</div>
+        <ul class="menu">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="skills.html" class="active">Skills</a></li>
+            <li><a href="works.html">Works</a></li>
+        </ul>
+        <a class="cta" href="contact.html">Contact</a>
+    </nav>
+</header>
+
+<main>
+    <section class="hero" style="grid-template-columns: 1fr; margin-bottom: 120px;">
+        <div>
+            <h1 class="title">My Skills</h1>
+            <p class="subtitle">Technologies and tools that I use in my work</p>
+
+            <div style="margin-top: 60px; max-width: 600px;">
+                <!-- Frontend Stack -->
+                <h3 style="color: var(--accent2); font-size: 1.2rem; margin-top: 40px; margin-bottom: 20px;">Frontend Development</h3>
+                
+                <div class="skill-item">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: var(--text); font-weight: 600;">HTML5</span>
+                        <span style="color: var(--accent2); font-size: 0.9rem;">95%</span>
+                    </div>
+                    <div style="background: #051f18; border: 1px solid #1e5b45; border-radius: 999px; height: 8px; overflow: hidden;">
+                        <div style="background: linear-gradient(90deg, var(--accent), var(--accent2)); height: 100%; width: 95%; border-radius: 999px;"></div>
+                    </div>
+                </div>
+
+                <div class="skill-item">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: var(--text); font-weight: 600;">CSS3</span>
+                        <span style="color: var(--accent2); font-size: 0.9rem;">90%</span>
+                    </div>
+                    <div style="background: #051f18; border: 1px solid #1e5b45; border-radius: 999px; height: 8px; overflow: hidden;">
+                        <div style="background: linear-gradient(90deg, var(--accent), var(--accent2)); height: 100%; width: 90%; border-radius: 999px;"></div>
+                    </div>
+                </div>
+
+                <div class="skill-item">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: var(--text); font-weight: 600;">JavaScript</span>
+                        <span style="color: var(--accent2); font-size: 0.9rem;">75%</span>
+                    </div>
+                    <div style="background: #051f18; border: 1px solid #1e5b45; border-radius: 999px; height: 8px; overflow: hidden;">
+                        <div style="background: linear-gradient(90deg, var(--accent), var(--accent2)); height: 100%; width: 75%; border-radius: 999px;"></div>
+                    </div>
+                </div>
+
+                <!-- Design Skills -->
+                <h3 style="color: var(--accent2); font-size: 1.2rem; margin-top: 40px; margin-bottom: 20px;">Design</h3>
+                
+                <div class="skill-item">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: var(--text); font-weight: 600;">Figma</span>
+                        <span style="color: var(--accent2); font-size: 0.9rem;">85%</span>
+                    </div>
+                    <div style="background: #051f18; border: 1px solid #1e5b45; border-radius: 999px; height: 8px; overflow: hidden;">
+                        <div style="background: linear-gradient(90deg, var(--accent), var(--accent2)); height: 100%; width: 85%; border-radius: 999px;"></div>
+                    </div>
+                </div>
+
+                <div class="skill-item">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: var(--text); font-weight: 600;">UI/UX Design</span>
+                        <span style="color: var(--accent2); font-size: 0.9rem;">80%</span>
+                    </div>
+                    <div style="background: #051f18; border: 1px solid #1e5b45; border-radius: 999px; height: 8px; overflow: hidden;">
+                        <div style="background: linear-gradient(90deg, var(--accent), var(--accent2)); height: 100%; width: 80%; border-radius: 999px;"></div>
+                    </div>
+                </div>
+
+                <div class="skill-item">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: var(--text); font-weight: 600;">Adobe (Photoshop, Illustrator)</span>
+                        <span style="color: var(--accent2); font-size: 0.9rem;">70%</span>
+                    </div>
+                    <div style="background: #051f18; border: 1px solid #1e5b45; border-radius: 999px; height: 8px; overflow: hidden;">
+                        <div style="background: linear-gradient(90deg, var(--accent), var(--accent2)); height: 100%; width: 70%; border-radius: 999px;"></div>
+                    </div>
+                </div>
+
+                <!-- Tools & Methodologies -->
+                <h3 style="color: var(--accent2); font-size: 1.2rem; margin-top: 40px; margin-bottom: 20px;">Tools</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    <span class="tech-tag">Git</span>
+                    <span class="tech-tag">Responsive Design</span>
+                    <span class="tech-tag">Flexbox</span>
+                    <span class="tech-tag">Grid Layout</span>
+                    <span class="tech-tag">Prototyping</span>
+                    <span class="tech-tag">Web Performance</span>
+                    <span class="tech-tag">Accessibility</span>
+                    <span class="tech-tag">Mobile Design</span>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    © 2026 Rafael Developer — Made with ❤️ and CSS
+</footer>
+
+</body>
+</html>
