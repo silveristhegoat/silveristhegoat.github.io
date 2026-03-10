@@ -1,1 +1,307 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Graafika - Graphics Playground</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap');
+
+    :root {
+      --bg-1: #061224;
+      --bg-2: #0f2d3b;
+      --bg-3: #173951;
+      --ink: #e4f4ff;
+      --muted: #9ec0cf;
+      --accent: #ffe9a8;
+      --card: rgba(9, 20, 35, 0.55);
+      --card-strong: rgba(6, 16, 30, 0.72);
+      --card-border: rgba(185, 230, 252, 0.18);
+      --shadow: 0 16px 35px rgba(0, 0, 0, 0.3);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: 'Space Grotesk', sans-serif;
+      color: var(--ink);
+      background: radial-gradient(circle at 10% 0%, #274f67 0%, transparent 35%),
+        radial-gradient(circle at 90% 85%, #0d5563 0%, transparent 45%),
+        linear-gradient(130deg, var(--bg-1), var(--bg-2) 45%, var(--bg-3));
+    }
+
+    .layout {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: minmax(240px, 320px) 1fr;
+      gap: 1rem;
+      padding: 1rem;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 0.9rem;
+      backdrop-filter: blur(8px);
+      box-shadow: var(--shadow);
+    }
+
+    .menu {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.95rem;
+      align-self: start;
+      position: sticky;
+      top: 1rem;
+    }
+
+    .menu h1 {
+      margin: 0;
+      font-size: 1.08rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .menu p {
+      margin: 0;
+      font-size: 0.92rem;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+
+    .nav {
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .demo-btn {
+      width: 100%;
+      text-align: left;
+      border: 1px solid rgba(199, 236, 254, 0.25);
+      background: rgba(21, 38, 66, 0.62);
+      color: var(--ink);
+      font: inherit;
+      border-radius: 0.7rem;
+      padding: 0.72rem 0.78rem;
+      cursor: pointer;
+      transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+    }
+
+    .demo-btn:hover,
+    .demo-btn:focus-visible {
+      outline: none;
+      transform: translateY(-1px);
+      background: rgba(39, 66, 105, 0.72);
+      border-color: rgba(255, 233, 168, 0.58);
+    }
+
+    .demo-btn.active {
+      border-color: rgba(255, 233, 168, 0.74);
+      background: rgba(53, 87, 132, 0.72);
+      box-shadow: inset 0 0 0 1px rgba(255, 233, 168, 0.3);
+    }
+
+    .viewer {
+      padding: 0.75rem;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 0.6rem;
+      min-height: calc(100vh - 2rem);
+      background: var(--card-strong);
+    }
+
+    .viewer-top {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      align-items: center;
+      justify-content: space-between;
+      border: 1px solid var(--card-border);
+      border-radius: 0.7rem;
+      padding: 0.55rem 0.65rem;
+      background: rgba(12, 30, 52, 0.6);
+    }
+
+    .viewer-top strong {
+      font-size: 0.92rem;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+      font-weight: 700;
+    }
+
+    .viewer-top a {
+      color: var(--ink);
+      text-decoration: none;
+      border: 1px solid rgba(199, 236, 254, 0.32);
+      border-radius: 0.55rem;
+      padding: 0.38rem 0.55rem;
+      font-size: 0.84rem;
+      background: rgba(17, 38, 66, 0.74);
+    }
+
+    .viewer-top a:hover,
+    .viewer-top a:focus-visible {
+      outline: none;
+      border-color: rgba(255, 233, 168, 0.58);
+      background: rgba(39, 66, 105, 0.72);
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: 1px solid var(--card-border);
+      border-radius: 0.8rem;
+      background: #091423;
+    }
+
+    @media (max-width: 920px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .menu {
+        position: static;
+      }
+
+      .viewer {
+        min-height: 72vh;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="panel menu">
+      <h1>Graafika Demos</h1>
+      <p>All tasks are still separate files. Use this page to open them in one place.</p>
+
+      <nav class="nav" aria-label="Demo List">
+        <button class="demo-btn active" type="button" data-file="21-pacman-game.html" data-label="Pac-Man Game">
+          Pac-Man Game
+        </button>
+        <button class="demo-btn" type="button" data-file="01-cursor-trail.html" data-label="01 - Cursor Trail">
+          01 - Cursor Trail
+        </button>
+        <button class="demo-btn" type="button" data-file="02-magnetic-buttons.html" data-label="02 - Magnetic Buttons">
+          02 - Magnetic Buttons
+        </button>
+        <button class="demo-btn" type="button" data-file="03-dynamic-background-gradient.html" data-label="03 - Dynamic Background Gradient">
+          03 - Dynamic Background Gradient
+        </button>
+        <button class="demo-btn" type="button" data-file="04-click-to-explode.html" data-label="04 - Click-to-Explode">
+          04 - Click-to-Explode
+        </button>
+        <button class="demo-btn" type="button" data-file="05-scroll-driven-scaling.html" data-label="05 - Scroll-Driven Scaling">
+          05 - Scroll-Driven Scaling
+        </button>
+        <button class="demo-btn" type="button" data-file="06-toggle-themes-with-sound.html" data-label="06 - Toggle Themes with Sound">
+          06 - Toggle Themes with Sound
+        </button>
+        <button class="demo-btn" type="button" data-file="07-hover-glitch-effect.html" data-label="07 - Hover-Glitch Effect">
+          07 - Hover-Glitch Effect
+        </button>
+        <button class="demo-btn" type="button" data-file="08-shake-to-clear.html" data-label="08 - Shake to Clear">
+          08 - Shake to Clear
+        </button>
+        <button class="demo-btn" type="button" data-file="09-custom-cursor-shape.html" data-label="09 - Custom Cursor Shape">
+          09 - Custom Cursor Shape
+        </button>
+        <button class="demo-btn" type="button" data-file="10-typing-ghost.html" data-label="10 - Typing Ghost">
+          10 - Typing Ghost
+        </button>
+        <button class="demo-btn" type="button" data-file="11-sticker-slap.html" data-label="11 - Sticker Slap">
+          11 - Sticker Slap
+        </button>
+        <button class="demo-btn" type="button" data-file="12-color-splash.html" data-label="12 - Color Splash">
+          12 - Color Splash
+        </button>
+        <button class="demo-btn" type="button" data-file="13-dragging-physics.html" data-label="13 - Dragging Physics">
+          13 - Dragging Physics
+        </button>
+        <button class="demo-btn" type="button" data-file="14-auto-chaos-rotation.html" data-label="14 - Auto-Chaos Rotation">
+          14 - Auto-Chaos Rotation
+        </button>
+        <button class="demo-btn" type="button" data-file="15-hover-filter-swap.html" data-label="15 - Hover Filter Swap">
+          15 - Hover Filter Swap
+        </button>
+        <button class="demo-btn" type="button" data-file="16-text-shadow-follow.html" data-label="16 - Text Shadow Follow">
+          16 - Text Shadow Follow
+        </button>
+        <button class="demo-btn" type="button" data-file="17-z-index-shuffle.html" data-label="17 - Z-Index Shuffle">
+          17 - Z-Index Shuffle
+        </button>
+        <button class="demo-btn" type="button" data-file="18-eraser-mode.html" data-label="18 - Eraser Mode">
+          18 - Eraser Mode
+        </button>
+        <button class="demo-btn" type="button" data-file="19-key-sound-piano.html" data-label="19 - Key-Sound Piano">
+          19 - Key-Sound Piano
+        </button>
+        <button class="demo-btn" type="button" data-file="20-screen-edge-warp.html" data-label="20 - Screen Edge Warp">
+          20 - Screen Edge Warp
+        </button>
+      </nav>
+    </aside>
+
+    <main class="panel viewer">
+      <div class="viewer-top">
+        <strong id="demo-title">Pac-Man Game</strong>
+        <a id="open-file" href="21-pacman-game.html" target="_blank" rel="noopener noreferrer">Open File Directly</a>
+      </div>
+      <iframe id="demo-frame" src="21-pacman-game.html" title="Graphics demo viewer" loading="lazy"></iframe>
+    </main>
+  </div>
+
+  <script>
+    const buttons = Array.from(document.querySelectorAll('.demo-btn'));
+    const frame = document.getElementById('demo-frame');
+    const title = document.getElementById('demo-title');
+    const openFileLink = document.getElementById('open-file');
+
+    function selectDemo(button) {
+      const file = button.dataset.file;
+      const label = button.dataset.label;
+
+      frame.src = file;
+      title.textContent = label;
+      openFileLink.href = file;
+
+      for (const btn of buttons) {
+        btn.classList.toggle('active', btn === button);
+      }
+    }
+
+    for (const button of buttons) {
+      button.addEventListener('click', () => {
+        selectDemo(button);
+      });
+    }
+
+    function isPacmanActive() {
+      return (frame.getAttribute('src') || '').includes('21-pacman-game.html');
+    }
+
+    document.addEventListener('keydown', (event) => {
+      if (!isPacmanActive()) {
+        return;
+      }
+
+      const key = String(event.key || '');
+
+      if (frame.contentWindow) {
+        frame.contentWindow.postMessage({ type: 'pacman-control', key }, '*');
+      }
+
+      event.preventDefault();
+    });
+  </script>
+</body>
+</html>
 
