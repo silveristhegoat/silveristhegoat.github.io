@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Synth - Draw Music</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Neural Synth</h1>
+            <p class="subtitle">Draw to create music - Higher = Higher pitch</p>
+            <p class="portfolio-link-wrap">
+                <a class="portfolio-link" href="https://silveristhegoat.github.io/Portfolio/index.html" target="_blank" rel="noopener noreferrer">Visit Portfolio</a>
+            </p>
+        </header>
+        
+        <div class="controls">
+            <button id="clearBtn">Clear Canvas</button>
+            
+            <div class="mode-selector">
+                <button class="mode-btn active" data-mode="draw">
+                    🎨 Draw
+                </button>
+                <button class="mode-btn" data-mode="symmetry">
+                    🔮 Symmetry
+                </button>
+                <button class="mode-btn" data-mode="gravity">
+                    🌀 Gravity Loops
+                </button>
+            </div>
+            
+            <div class="instrument-selector">
+                <button class="instrument-btn active" data-instrument="red" data-color="#ef4444">
+                    🔊 Bass (Red)
+                </button>
+                <button class="instrument-btn" data-instrument="blue" data-color="#3b82f6">
+                    🎹 Piano (Blue)
+                </button>
+                <button class="instrument-btn" data-instrument="yellow" data-color="#fbbf24">
+                    ✨ Synth (Yellow)
+                </button>
+            </div>
+            
+            <div class="loop-controls">
+                <button id="recordBtn" class="record-btn">
+                    ⏺️ Record Loop (5s)
+                </button>
+                <button id="playLoopBtn" class="play-loop-btn" style="display: none;">
+                    ▶️ Play
+                </button>
+                <button id="stopLoopBtn" class="stop-loop-btn" style="display: none;">
+                    ⏸️ Pause
+                </button>
+                <button id="clearLoopBtn" class="clear-loop-btn" style="display: none;">
+                    🗑️ Clear Loop
+                </button>
+                <span id="loopStatus" class="loop-status"></span>
+            </div>
+            
+            <div class="echo-controls">
+                <label>
+                    <input type="checkbox" id="echoToggle" checked>
+                    Echo Effect
+                </label>
+                <label>
+                    <input type="checkbox" id="waveformToggle" checked>
+                    Waveform Brush
+                </label>
+                <button id="shakeToClearBtn" class="shake-to-clear-btn">
+                    🎆 Shake to Clear
+                </button>
+            </div>
+        </div>
+        
+        <div class="info">
+            <span id="frequencyDisplay">Frequency: --</span>
+            <span id="noteDisplay">Note: --</span>
+        </div>
+        
+        <canvas id="canvas"></canvas>
+        
+        <div class="instructions">
+            <p id="drawModeInstructions">🎨 Draw & create music | 🎵 Higher = Higher pitch | ⚡ Faster = Louder & sharper | 🌊 Waveform brush | ⏺️ Record loops</p>
+            <p id="symmetryModeInstructions" style="display: none;">🔮 4-way reflections | 🎵 Harmonic chords | 🌊 Waveforms oscillate | ⏺️ Record loops</p>
+            <p id="gravityModeInstructions" style="display: none;">🌀 Click to place magnetic dots | 🎵 Particles create rhythmic patterns</p>
+            <p>👻 Lines and sounds fade with echo</p>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
