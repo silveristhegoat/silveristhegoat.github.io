@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title>Works - Rafael Developer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const links = document.querySelectorAll('a');
+        links.forEach(link => {
+          if (link.hostname === location.hostname) {
+            link.addEventListener('click', function(e) {
+              const href = this.getAttribute('href');
+              if (!href || href.startsWith('#')) return;
+              e.preventDefault();
+              document.body.classList.add('fade-out');
+              setTimeout(() => { window.location = href; }, 400);
+            });
+          }
+        });
+      });
+    </script>
+</head>
+<body>
+
+<header>
+    <nav class="nav">
+        <div class="brand">Digikangelane</div>
+        <ul class="menu">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="skills.html">Skills</a></li>
+            <li><a href="works.html" class="active">Works</a></li>
+        </ul>
+        <a class="cta" href="contact.html">Contact</a>
+    </nav>
+</header>
+
+<main>
+    <section class="hero" style="grid-template-columns: 1fr; margin-bottom: 60px;">
+        <div>
+            <h1 class="title">My Projects</h1>
+            <p class="subtitle">Here's my portfolio of work — from design to implementation</p>
+        </div>
+    </section>
+
+    <section class="cards" id="projects">
+        <article class="project-card">
+            <div class="project-image">
+                <div class="placeholder-img" style="background: linear-gradient(135deg, #ff7a18, #af002d);">🎨</div>
+            </div>
+            <div class="project-content">
+                <h3>DrawApp</h3>
+                <p class="project-desc">A drawing app project available from the local DrawApp folder.</p>
+                <div class="project-meta">
+                    <span class="meta-item">🖌️ Drawing Tool</span>
+                    <span class="meta-item">💻 Web App</span>
+                </div>
+                <div class="project-actions">
+                    <a href="https://silveristhegoat.github.io/DrawApp/" target="_blank" class="btn-view">👁️ Open Project</a>
+                </div>
+            </div>
+        </article>
+
+        <article class="project-card">
+            <div class="project-image">
+                <div class="placeholder-img" style="background: linear-gradient(135deg, #6c5ce7, #a29bfe);">📊</div>
+            </div>
+            <div class="project-content">
+                <h3>Budgetly Simulator</h3>
+                <p class="project-desc">A modern, minimal budget tracker featuring a custom-coded Canvas donut chart and real-time calculations.</p>
+                <div class="project-meta">
+                    <span class="meta-item">💻 Web App</span>
+                    <span class="meta-item">📈 Data Viz</span>
+                </div>
+                <div class="project-actions">
+                    <a href="https://silveristhegoat.github.io/Veebirakenduste%20harjutused2/" target="_blank" class="btn-view">👁️ View Project</a>
+                </div>
+            </div>
+        </article>
+
+        <article class="project-card">
+            <div class="project-image">
+                <div class="placeholder-img" style="background: #0d0208;">🕒</div>
+            </div>
+            <div class="project-content">
+                <h3>Cyberpunk Countdown</h3>
+                <p class="project-desc">A high-tech terminal interface with digital scramble animations and a cinematic end-state tracker.</p>
+                <div class="project-meta">
+                    <span class="meta-item">🎨 Cyberpunk UI</span>
+                    <span class="meta-item">🎬 Animation</span>
+                </div>
+                <div class="project-actions">
+                    <a href="https://silveristhegoat.github.io/Veebirakenduste%20harjutused4/" target="_blank" class="btn-view">👁️ View Project</a>
+                </div>
+            </div>
+        </article>
+
+        <article class="project-card">
+            <div class="project-image">
+                <div class="placeholder-img" style="background: linear-gradient(135deg, #4c51bf, #667eea);">🧠</div>
+            </div>
+            <div class="project-content">
+                <h3>Fallacy Finder</h3>
+                <p class="project-desc">An interactive quiz and library tool designed to help users identify and understand common logical errors.</p>
+                <div class="project-meta">
+                    <span class="meta-item">🎓 Education</span>
+                    <span class="meta-item">⚖️ Logic</span>
+                </div>
+                <div class="project-actions">
+                    <a href="https://silveristhegoat.github.io/Veebirakenduste%20harjutused6/" target="_blank" class="btn-view">👁️ View Project</a>
+                </div>
+            </div>
+        </article>
+
+        <article class="project-card">
+            <div class="project-image">
+                <div class="placeholder-img">💰</div>
+            </div>
+            <div class="project-content">
+                <h3>Financial Budgeting App</h3>
+                <p class="project-desc">A modern mobile application for financial management with an intuitive interface, expense charts and analytics</p>
+                <div class="project-meta">
+                    <span class="meta-item">📱 Mobile</span>
+                    <span class="meta-item">🎨 UI/UX Design</span>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-tag">Figma</span>
+                    <span class="tech-tag">Design System</span>
+                    <span class="tech-tag">Prototype</span>
+                </div>
+                <div class="project-actions">
+                    <a href="https://www.figma.com/proto/88FqKvRnm05pMoe4XnofD7/Dribbble?node-id=0-1&t=SHkqmR8x5tIcS0FT-1" target="_blank" class="btn-view">👁️ View</a>
+                </div>
+            </div>
+        </article>
+
+        <article class="project-card">
+            <div class="project-image">
+                <div class="placeholder-img">🍕</div>
+            </div>
+            <div class="project-content">
+                <h3>Food Ordering App</h3>
+                <p class="project-desc">A mobile application for food ordering with restaurant catalog, user reviews and delivery tracking</p>
+                <div class="project-meta">
+                    <span class="meta-item">📱 iOS & Android</span>
+                    <span class="meta-item">🛒 E-commerce</span>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-tag">Figma</span>
+                    <span class="tech-tag">Mobile Design</span>
+                    <span class="tech-tag">User Flow</span>
+                </div>
+                <div class="project-actions">
+                    <a href="https://www.figma.com/proto/coyJ1d6kSMcSKfl9Q30CTG/foodtabletREAL?t=95AWhTwLJVpPICiy-1" target="_blank" class="btn-view">👁️ View</a>
+                </div>
+            </div>
+        </article>
+
+        <article class="project-card">
+            <div class="project-image">
+                <div class="placeholder-img">🍽️</div>
+            </div>
+            <div class="project-content">
+                <h3>Food Tablet POS System</h3>
+                <p class="project-desc">A restaurant management system for tablets with analytics, order management and reporting for owners</p>
+                <div class="project-meta">
+                    <span class="meta-item">💼 Enterprise</span>
+                    <span class="meta-item">⚙️ Dashboard</span>
+                </div>
+                <div class="tech-stack">
+                    <span class="tech-tag">Figma</span>
+                    <span class="tech-tag">Tablet Design</span>
+                    <span class="tech-tag">Admin Panel</span>
+                </div>
+                <div class="project-actions">
+                    <a href="https://www.figma.com/proto/DZ69eRf1s1ETCmm3SVJzMo/FoodApp?node-id=0-1&t=jtqCQ8j6is93VtLs-1" target="_blank" class="btn-view">👁️ View</a>
+                </div>
+            </div>
+        </article>
+    </section>
+</main>
+
+<footer>
+    © 2026 Rafael Developer — Made with ❤️ and CSS
+</footer>
+
+</body>
+</html>
