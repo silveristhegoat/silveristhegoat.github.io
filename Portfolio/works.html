@@ -14,6 +14,7 @@
             link.addEventListener('click', function(e) {
               const href = this.getAttribute('href');
               if (!href || href.startsWith('#')) return;
+              if (this.target === '_blank') return;
               e.preventDefault();
               document.body.classList.add('fade-out');
               setTimeout(() => { window.location = href; }, 400);
