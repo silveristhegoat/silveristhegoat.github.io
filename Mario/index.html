@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Classic Plumber Run</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <p class="kicker">Retro side-scroller</p>
+      <h1>Classic Plumber Run</h1>
+      <p class="lede">
+        A browser game inspired by the feel of 8-bit platformers, built with original shapes and no external assets.
+      </p>
+      <div class="controls-card">
+        <span>Move: Arrow keys or A / D</span>
+        <span>Jump: Space, W, Arrow Up</span>
+        <span>Restart: R</span>
+      </div>
+      <div class="panel-links">
+        <a class="panel-link" href="https://silveristhegoat.github.io/Portfolio/index.html" target="_blank" rel="noopener noreferrer">Portfolio</a>
+        <a class="panel-link" href="achievements.html">View Achievements</a>
+        <a class="panel-link" href="skins.html">Mario Skins</a>
+      </div>
+      <section class="leaderboard-panel" aria-label="High scores">
+        <div class="leaderboard-heading">
+          <span class="label">High Scores</span>
+          <strong id="leaderboardSummary">Top 5 runs</strong>
+        </div>
+        <ol id="leaderboardList" class="leaderboard-list"></ol>
+      </section>
+    </section>
+
+    <section class="game-panel">
+      <div class="hud" aria-label="Game HUD">
+        <div><span class="label">Score</span><strong id="score">000000</strong></div>
+        <div><span class="label">Coins</span><strong id="coins">00</strong></div>
+        <div><span class="label">Lives</span><strong id="lives">03</strong></div>
+        <div><span class="label">Time</span><strong id="time">400</strong></div>
+        <div><span class="label">Combo</span><strong id="combo">x0</strong></div>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="game" width="960" height="700" aria-label="Classic platformer game"></canvas>
+        <div class="overlay" id="overlay">
+          <div class="overlay-card">
+            <p class="overlay-kicker">Level 1-1</p>
+            <h2>Reach the flag</h2>
+            <p>Collect coins, stomp the patrols, and cross the course before the timer runs out.</p>
+            <p id="statsText" class="stats-text hidden"></p>
+            <div class="mode-picker" aria-label="Game mode picker">
+              <button id="classicModeButton" class="mode-button active" type="button">Classic</button>
+              <button id="infiniteModeButton" class="mode-button" type="button">Infinite</button>
+            </div>
+            <p class="mode-hint" id="modeHint">Classic mode: 3 lives and level timer.</p>
+            <a class="panel-link overlay-link" href="achievements.html">Open Achievements</a>
+            <a class="panel-link overlay-link" href="skins.html">Open Skins</a>
+            <button id="startButton" type="button">Start Run</button>
+          </div>
+        </div>
+      </div>
+      <div class="status-row">
+        <span id="statusText">Press Start Run</span>
+        <button id="ghostToggleButton" type="button">Ghost: On</button>
+        <button id="restartButton" type="button">Reset</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="game.js"></script>
+</body>
+</html>

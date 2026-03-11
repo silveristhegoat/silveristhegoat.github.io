@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Achievements | Classic Plumber Run</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="achievements-shell">
+    <section class="achievements-page">
+      <div class="page-header">
+        <div>
+          <p class="kicker">Player Progress</p>
+          <h1>Achievements</h1>
+          <p>Track your unlocked goals and chase the remaining run challenges.</p>
+        </div>
+        <div class="panel-links">
+          <a class="panel-link" href="skins.html">Mario Skins</a>
+          <a class="panel-link" href="index.html">Back To Game</a>
+        </div>
+      </div>
+
+      <section class="achievements-panel" aria-label="Achievements">
+        <div class="achievements-heading">
+          <span class="label">Achievements</span>
+          <strong id="achievementSummary">0 / 5 unlocked</strong>
+        </div>
+        <ul id="achievementsList" class="achievements-list"></ul>
+      </section>
+    </section>
+  </main>
+
+  <script src="achievements.js"></script>
+</body>
+</html>
