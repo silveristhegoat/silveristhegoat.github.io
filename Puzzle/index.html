@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pixel Puzzle</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="control-panel">
+      <h1>Pixel Puzzle</h1>
+      <p class="subtitle">Turn your image into a draggable puzzle.</p>
+
+      <input type="file" id="imageInput" accept="image/*" hidden />
+      <button id="uploadBtn" class="action-btn">Upload photo</button>
+      <label for="difficultySelect" class="control-label">Difficulty</label>
+      <select id="difficultySelect" class="difficulty-select" aria-label="Puzzle difficulty">
+        <option value="3">3 x 3</option>
+        <option value="5" selected>5 x 5</option>
+        <option value="10">10 x 10</option>
+      </select>
+      <label for="shapeSelect" class="control-label">Shape mode</label>
+      <select id="shapeSelect" class="difficulty-select" aria-label="Puzzle shape mode">
+        <option value="square" selected>Squares</option>
+        <option value="triangle">Triangles</option>
+        <option value="polygon">Random polygons</option>
+      </select>
+      <input type="file" id="musicInput" accept="audio/*" hidden />
+      <button id="uploadMusicBtn" class="action-btn action-btn--music">Upload music</button>
+      <label class="loop-toggle" for="musicLoopToggle">
+        <input id="musicLoopToggle" type="checkbox" checked />
+        <span>Loop music</span>
+      </label>
+      <button id="musicToggleBtn" class="action-btn action-btn--music" disabled>Play music</button>
+      <button id="cutBtn" class="action-btn action-btn--accent">Cut into puzzles</button>
+      <button id="viewBtn" class="action-btn">View</button>
+      <button id="checkBtn" class="action-btn action-btn--check">Check pieces</button>
+      <p id="statusText" class="status">No image selected.</p>
+
+      <section class="timer-panel">
+        <h3>Timer</h3>
+        <p id="timerValue" class="timer-value">00:00.000</p>
+      </section>
+
+      <section class="leaderboard-panel">
+        <h3>Leaderboard</h3>
+        <ol id="leaderboardList" class="leaderboard-list">
+          <li class="muted">No records yet.</li>
+        </ol>
+      </section>
+    </aside>
+
+    <main class="workspace">
+      <section class="top-zone">
+        <section class="assembly-panel">
+          <h2>Assembly field</h2>
+          <div id="assemblyStage" class="assembly-stage">
+            <img id="ghostImage" class="ghost-image" alt="Ghost hint" />
+            <div id="assemblyGrid" class="assembly-grid" aria-label="Puzzle assembly grid"></div>
+          </div>
+        </section>
+
+        <section class="original-panel">
+          <h2>Original image</h2>
+          <div id="uploadDropZone" class="image-frame" aria-label="Image upload area">
+            <img id="previewImage" alt="Uploaded preview" />
+            <p id="previewPlaceholder">Upload a photo to preview it here.</p>
+          </div>
+        </section>
+      </section>
+
+      <section class="storage-panel">
+        <div class="storage-header">
+          <h2>Storage</h2>
+          <span id="pieceCount">0 pieces</span>
+        </div>
+        <div id="storageArea" class="storage-area" aria-label="Puzzle piece storage"></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="successScreen" class="success-screen" aria-hidden="true">
+    <div class="success-card">
+      <h2>Puzzle complete!</h2>
+      <p id="successText">You assembled all pieces in the correct order.</p>
+      <button id="successCloseBtn" class="action-btn action-btn--accent">Awesome</button>
+    </div>
+  </div>
+
+  <canvas id="fireworksCanvas" class="fireworks-canvas" aria-hidden="true"></canvas>
+
+  <script src="script.js"></script>
+</body>
+</html>
