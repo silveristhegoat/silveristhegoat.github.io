@@ -36,6 +36,10 @@ const DASH_SPEED = 700;
 const DASH_DISTANCE = 700;
 const DASH_DURATION = DASH_DISTANCE / DASH_SPEED;
 const DASH_COOLDOWN = 2.5;
+const YOSHI_WIDTH = TILE * 0.88;
+const YOSHI_HEIGHT = TILE * 1.0;
+const YOSHI_SHELL_WIDTH = TILE * 0.9;
+const YOSHI_SHELL_HEIGHT = TILE * 0.58;
 const ACHIEVEMENT_STORAGE_KEY = "classic-plumber-run-achievements";
 const HIGH_SCORES_STORAGE_KEY = "classic-plumber-run-high-scores";
 const GHOST_REPLAY_STORAGE_KEY = "classic-plumber-run-ghost-replays";
@@ -151,6 +155,20 @@ function clamp(value, min, max) {
 
 function formatCounter(value, size) {
   return String(Math.max(0, Math.floor(value))).padStart(size, "0");
+}
+
+function setYoshiShellState(enemy, shellActive) {
+  if (!enemy || enemy.type !== "yoshi" || enemy.shellActive === shellActive) {
+    return;
+  }
+
+  const bottom = enemy.y + enemy.height;
+  const center = enemy.x + enemy.width / 2;
+  enemy.shellActive = shellActive;
+  enemy.width = shellActive ? YOSHI_SHELL_WIDTH : YOSHI_WIDTH;
+  enemy.height = shellActive ? YOSHI_SHELL_HEIGHT : YOSHI_HEIGHT;
+  enemy.x = center - enemy.width / 2;
+  enemy.y = bottom - enemy.height;
 }
 
 function loadAchievements() {
@@ -561,8 +579,18 @@ function buildLevel(mode = "classic") {
     decoClouds: [],
     movingPlatforms: [],
     flag: isInfinite ? null : { x: TILE * 112, y: groundY - TILE * 9, width: 26, height: TILE * 9 },
+    finishTrigger: null,
     castle: isInfinite ? null : { x: TILE * 115.25, y: groundY - TILE * 2.5, width: TILE * 2.5, height: TILE * 2.5 }
   };
+
+  if (!isInfinite && level.flag) {
+    level.finishTrigger = {
+      x: level.flag.x - 20,
+      y: -HEIGHT,
+      width: 64,
+      height: level.groundY + HEIGHT
+    };
+  }
 
   function addBricks(blocks, offsetX = 0) {
     for (const [tileX, tileY] of blocks) {
@@ -631,8 +659,8 @@ function buildLevel(mode = "classic") {
         shellActive: false,
         x: tileX * TILE,
         y: groundY - TILE * 1.0,
-        width: TILE * 0.88,
-        height: TILE * 1.0,
+        width: YOSHI_WIDTH,
+        height: YOSHI_HEIGHT,
         vx: 110 + Math.random() * 50,
         vy: 0,
         alive: true,
@@ -1508,7 +1536,7 @@ function drawCoinPop(coin, cameraX) {
   ctx.restore();
 }
 
-function handleEnemies(dt) {
+function handleEnemies(dt, previousPlayerBottom, previousPlayerVy) {
   for (const enemy of game.level.enemies) {
     if (enemy.stompedTimer > 0) {
       enemy.stompedTimer = Math.max(0, enemy.stompedTimer - dt);
@@ -1534,12 +1562,14 @@ function handleEnemies(dt) {
     }
 
     const playerBottom = game.player.y + game.player.height;
-    const stomped = game.player.vy > 150 && playerBottom - enemy.y < 22;
+    const landedFromAbove = previousPlayerBottom <= enemy.y + 8 && previousPlayerVy >= 0;
+    const stompedByVelocity = game.player.vy > 150 && playerBottom - enemy.y < 22;
+    const stomped = stompedByVelocity || landedFromAbove;
 
     if (stomped) {
       if (enemy.type === "yoshi" && !enemy.shellActive) {
         // Activate shell instead of killing
-        enemy.shellActive = true;
+        setYoshiShellState(enemy, true);
         enemy.vx = 320;  // Kick hard
         game.player.vy = -JUMP_SPEED * 0.48;
         triggerShake(4, 0.18);
@@ -1599,6 +1629,8 @@ function update(dt, elapsed) {
   }
 
   const player = game.player;
+  const previousPlayerBottom = player.y + player.height;
+  const previousPlayerVy = player.vy;
   const movingLeft = keys.has("ArrowLeft") || keys.has("KeyA");
   const movingRight = keys.has("ArrowRight") || keys.has("KeyD");
   const wantsJump = keys.has("Space") || keys.has("ArrowUp") || keys.has("KeyW");
@@ -1677,7 +1709,7 @@ function update(dt, elapsed) {
   resolvePlayerVsSolids(player, dt);
   collectCoins(elapsed);
   updateMushrooms(dt);
-  handleEnemies(dt);
+  handleEnemies(dt, previousPlayerBottom, previousPlayerVy);
   recordGhostFrame(dt);
 
   if (player.y > HEIGHT + TILE * 3) {
@@ -1686,7 +1718,8 @@ function update(dt, elapsed) {
     return;
   }
 
-  if (game.level.flag && rectsOverlap(player, game.level.flag)) {
+  const finishTrigger = game.level.finishTrigger ?? game.level.flag;
+  if (finishTrigger && rectsOverlap(player, finishTrigger)) {
     if (game.mode === "infinite") {
       addScore(1500);
       const carryScore = game.score;
@@ -2059,10 +2092,10 @@ function drawYoshi(ex, ey, w, h, dir, isStomped, shellActive) {
   const showShell = shellActive || isStomped;
   const sprite = showShell ? yoshiShellSprite : yoshiSprite;
   if (sprite.complete && sprite.naturalWidth) {
-    const drawWidth = w * 1.4;
-    const drawHeight = h * 1.3;
+    const drawWidth = showShell ? w * 1.08 : w * 1.32;
+    const drawHeight = showShell ? h * 1.05 : h * 1.22;
     const drawX = ex - (drawWidth - w) / 2;
-    const drawY = showShell ? ey + h - drawHeight + 2 : ey - (drawHeight - h);
+    const drawY = showShell ? ey + h - drawHeight : ey + h - drawHeight;
 
     ctx.save();
     if (!showShell && dir < 0) {
