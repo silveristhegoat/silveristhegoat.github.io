@@ -27,6 +27,7 @@ const fireworksCanvas = document.getElementById("fireworksCanvas");
 const fireworksCtx = fireworksCanvas.getContext("2d");
 
 const TILE_SIZE = 100;
+const LEADERBOARD_STORAGE_KEY = "pixelPuzzleRecords";
 let sourceImage = null;
 let hintVisible = false;
 let audioContext = null;
@@ -156,13 +157,11 @@ function renderLeaderboard(records) {
 
 async function loadLeaderboard() {
   try {
-    const response = await fetch("/api/records");
-    if (!response.ok) {
-      throw new Error("Failed to load records");
-    }
-
-    const records = await response.json();
-    renderLeaderboard(records);
+    const raw = localStorage.getItem(LEADERBOARD_STORAGE_KEY);
+    const records = raw ? JSON.parse(raw) : [];
+    const normalized = Array.isArray(records) ? records : [];
+    normalized.sort((a, b) => a.elapsedMs - b.elapsedMs);
+    renderLeaderboard(normalized);
   } catch (error) {
     renderLeaderboard([]);
   }
@@ -177,22 +176,15 @@ async function saveRecord(elapsedMs) {
   };
 
   try {
-    const response = await fetch("/api/records", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(record)
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to save record");
-    }
-
-    const updatedRecords = await response.json();
-    renderLeaderboard(updatedRecords);
+    const raw = localStorage.getItem(LEADERBOARD_STORAGE_KEY);
+    const records = raw ? JSON.parse(raw) : [];
+    const normalized = Array.isArray(records) ? records : [];
+    normalized.push(record);
+    normalized.sort((a, b) => a.elapsedMs - b.elapsedMs);
+    localStorage.setItem(LEADERBOARD_STORAGE_KEY, JSON.stringify(normalized));
+    renderLeaderboard(normalized);
   } catch (error) {
-    setStatus("Solved, but record could not be saved. Start with server.js.", true);
+    setStatus("Solved, but record could not be saved in this browser.", true);
   }
 }
 
