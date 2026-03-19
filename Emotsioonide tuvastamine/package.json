@@ -1,0 +1,20 @@
+{
+  "name": "emotsioonide-tuvastamine",
+  "version": "1.0.0",
+  "description": "Camera-based emotion detection web app",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "vite": "^8.0.1"
+  },
+  "dependencies": {
+    "@vladmandic/face-api": "^1.7.15"
+  }
+}
