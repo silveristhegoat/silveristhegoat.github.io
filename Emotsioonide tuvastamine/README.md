@@ -1,7 +1,5 @@
 # Emotion Detector Web App
 
-NOTE: You must launch this app with localhost in order for it to work properly.
-
 This project is a browser-based emotion detection app that uses your camera feed to detect:
 
 - Joy
