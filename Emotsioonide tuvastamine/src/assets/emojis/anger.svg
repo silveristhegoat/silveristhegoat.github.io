@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Anger emoji">
+  <circle cx="32" cy="32" r="30" fill="#FF8E8A" />
+  <path d="M16 22l10-5" stroke="#3D1111" stroke-width="4" stroke-linecap="round" />
+  <path d="M48 22l-10-5" stroke="#3D1111" stroke-width="4" stroke-linecap="round" />
+  <circle cx="22" cy="28" r="4" fill="#3D1111" />
+  <circle cx="42" cy="28" r="4" fill="#3D1111" />
+  <path d="M20 44c3-3 7-5 12-5s9 2 12 5" fill="none" stroke="#3D1111" stroke-width="4" stroke-linecap="round" />
+</svg>

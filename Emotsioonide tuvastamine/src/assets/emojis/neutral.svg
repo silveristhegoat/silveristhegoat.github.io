@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Neutral emoji">
+  <circle cx="32" cy="32" r="30" fill="#C4CAD1" />
+  <circle cx="22" cy="24" r="4" fill="#252C34" />
+  <circle cx="42" cy="24" r="4" fill="#252C34" />
+  <path d="M20 42h24" fill="none" stroke="#252C34" stroke-width="4" stroke-linecap="round" />
+</svg>

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Emotion Camera</title>
+    <script type="module" crossorigin src="/assets/index-BevhPhkj.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BfdBlgc4.css">
+  </head>
+  <body class="emotion-neutral">
+    <main class="app">
+      <h1>Emotion Detector</h1>
+      <div class="video-wrap">
+        <video id="camera" autoplay muted playsinline></video>
+        <div id="emojiOverlay" class="emoji-overlay" aria-hidden="true"></div>
+      </div>
+
+      <div class="panel">
+        <p><strong>Emotion:</strong> <span id="emotion">Neutral</span></p>
+        <p id="confidence">Confidence: --</p>
+        <label class="mode-toggle" for="multiFaceToggle">
+          <input id="multiFaceToggle" type="checkbox" />
+          Multi-face mode
+        </label>
+        <ul id="facesList" class="faces-list" aria-live="polite"></ul>
+        <section class="summary" aria-live="polite">
+          <p class="summary-title">Session Summary</p>
+          <p>Total samples: <span id="summaryTotal">0</span></p>
+          <ul class="summary-list">
+            <li>Joy: <span id="summaryJoy">0</span>%</li>
+            <li>Sadness: <span id="summarySadness">0</span>%</li>
+            <li>Neutral: <span id="summaryNeutral">0</span>%</li>
+            <li>Anger: <span id="summaryAnger">0</span>%</li>
+          </ul>
+        </section>
+        <div class="button-row">
+          <button id="startButton">Enable Camera</button>
+          <button id="screenshotButton" type="button">Take Screenshot</button>
+        </div>
+        <p id="hint">Allow camera access to detect joy, sadness, neutral, and anger.</p>
+      </div>
+    </main>
+
+  </body>
+</html>
