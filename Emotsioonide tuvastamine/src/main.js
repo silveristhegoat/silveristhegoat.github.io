@@ -10,6 +10,7 @@ const screenshotButton = document.querySelector('#screenshotButton');
 const multiFaceToggleElement = document.querySelector('#multiFaceToggle');
 const facesListElement = document.querySelector('#facesList');
 const emojiOverlayElement = document.querySelector('#emojiOverlay');
+const animalBackgroundElement = document.querySelector('#animalBackground');
 const summaryTotalElement = document.querySelector('#summaryTotal');
 const summaryJoyElement = document.querySelector('#summaryJoy');
 const summarySadnessElement = document.querySelector('#summarySadness');
@@ -21,6 +22,13 @@ const EMOJI_BY_EMOTION = {
   sadness: new URL('./assets/emojis/sadness.svg', import.meta.url).href,
   neutral: new URL('./assets/emojis/neutral.svg', import.meta.url).href,
   anger: new URL('./assets/emojis/anger.svg', import.meta.url).href,
+};
+
+const ANIMAL_BY_EMOTION = {
+  joy: new URL('../happymonkey.svg', import.meta.url).href,
+  sadness: new URL('../sadpenguin.svg', import.meta.url).href,
+  neutral: new URL('../neutralcat.svg', import.meta.url).href,
+  anger: new URL('../angrytiger.svg', import.meta.url).href,
 };
 
 let detectionTimer = null;
@@ -120,6 +128,15 @@ function applyTheme(emotionKey) {
     'emotion-anger'
   );
   document.body.classList.add(`emotion-${emotionKey}`);
+}
+
+function showAnimalForEmotion(emotionKey) {
+  const animalAsset = ANIMAL_BY_EMOTION[emotionKey] ?? ANIMAL_BY_EMOTION.neutral;
+  animalBackgroundElement.style.setProperty('--animal-image', `url("${animalAsset}")`);
+}
+
+function clearAnimalBackground() {
+  animalBackgroundElement.style.setProperty('--animal-image', 'none');
 }
 
 function clearFacesList() {
@@ -253,6 +270,7 @@ async function detectEmotion() {
       hintElement.textContent = 'No faces detected. Move faces into the frame.';
       clearFacesList();
       clearEmojiOverlay();
+      clearAnimalBackground();
       applyTheme('neutral');
       return;
     }
@@ -271,6 +289,7 @@ async function detectEmotion() {
     renderFacesList(faceSummaries);
     renderEmojiOverlay(faceItems);
     updateEmotionSummary(aggregate.name);
+    showAnimalForEmotion(aggregate.name);
     applyTheme(aggregate.name);
     return;
   }
@@ -283,6 +302,7 @@ async function detectEmotion() {
     hintElement.textContent = 'Center your face in the camera frame.';
     clearFacesList();
     clearEmojiOverlay();
+    clearAnimalBackground();
     applyTheme('neutral');
     return;
   }
@@ -296,6 +316,7 @@ async function detectEmotion() {
   clearFacesList();
   renderEmojiOverlay([{ box: result.detection.box, emotion: dominant.name }]);
   updateEmotionSummary(dominant.name);
+  showAnimalForEmotion(dominant.name);
   applyTheme(dominant.name);
 }
 
@@ -363,6 +384,7 @@ function disableCamera() {
   confidenceElement.textContent = 'Confidence: --';
   clearFacesList();
   clearEmojiOverlay();
+  clearAnimalBackground();
   hintElement.textContent = 'Camera disabled. Click Enable Camera to start again.';
   applyTheme('neutral');
   startButton.textContent = 'Enable Camera';
@@ -418,3 +440,7 @@ startButton.addEventListener('click', async () => {
 screenshotButton.addEventListener('click', () => {
   takeScreenshot();
 });
+
+// Initialize default theme visuals, including neutral animal background.
+applyTheme('neutral');
+clearAnimalBackground();
