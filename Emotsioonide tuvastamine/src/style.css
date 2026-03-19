@@ -28,8 +28,28 @@ body {
   background:
     radial-gradient(circle at 78% 20%, rgba(255, 255, 255, 0.03), transparent 38%),
     linear-gradient(135deg, var(--bg-core), var(--bg-edge));
+  background-repeat: no-repeat, no-repeat;
+  background-position: center, center;
+  background-size: auto, auto;
   transition: background 260ms ease;
   animation: pageFade 700ms ease-out both;
+}
+
+.animal-background {
+  --animal-image: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: var(--animal-image), var(--animal-image);
+  background-repeat: no-repeat, no-repeat;
+  background-position:
+    left max(3vw, 16px) bottom max(2vh, 16px),
+    right max(3vw, 16px) bottom max(2vh, 16px);
+  background-size: clamp(190px, 30vw, 420px), clamp(190px, 30vw, 420px);
+  opacity: 0.56;
+  filter: drop-shadow(0 14px 24px rgba(0, 0, 0, 0.45));
+  transition: background-image 200ms ease, opacity 200ms ease;
 }
 
 body::before,
@@ -41,7 +61,7 @@ body::after {
   border-radius: 50%;
   filter: blur(36px);
   pointer-events: none;
-  z-index: 0;
+  z-index: 1;
   animation: drift 8s ease-in-out infinite alternate;
 }
 
@@ -84,7 +104,7 @@ body.emotion-anger {
 
 .app {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   width: min(760px, 100%);
   background: var(--panel);
   border: 1px solid var(--panel-border);
