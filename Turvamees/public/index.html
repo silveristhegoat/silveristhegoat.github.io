@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Turvamees Motion Guard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Archivo+Black&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="layout">
+      <section class="panel panel-main">
+        <h1>Turvamees Motion Guard</h1>
+        <p>
+          Camera-powered movement detector. Each movement direction has its own sound,
+          and backward movement triggers a loud alarm pattern.
+        </p>
+
+        <div class="video-wrap">
+          <video id="camera" autoplay playsinline muted></video>
+          <canvas id="overlay"></canvas>
+        </div>
+
+        <div class="status-grid">
+          <div>
+            <span class="label">Movement</span>
+            <strong id="movementLabel">waiting...</strong>
+          </div>
+          <div>
+            <span class="label">Active Zone</span>
+            <strong id="activeZoneLabel">none</strong>
+          </div>
+          <div>
+            <span class="label">Motion Pixels</span>
+            <strong id="motionCount">0</strong>
+          </div>
+          <div>
+            <span class="label">Bounding Area</span>
+            <strong id="motionArea">0</strong>
+          </div>
+        </div>
+
+        <section class="timeline-panel">
+          <div class="timeline-header">
+            <h3>Event Timeline</h3>
+            <button id="clearTimelineBtn" type="button">Clear Log</button>
+          </div>
+          <div class="timeline-head-row">
+            <span>Time</span>
+            <span>Movement</span>
+            <span>Confidence</span>
+            <span>Zone</span>
+          </div>
+          <div id="timelineList" class="timeline-list">No events yet.</div>
+        </section>
+      </section>
+
+      <section class="panel panel-controls">
+        <h2>Controls</h2>
+
+        <label class="control">
+          <span>Detection sensitivity</span>
+          <input id="sensitivity" type="range" min="12" max="60" value="28" />
+        </label>
+
+        <label class="control">
+          <span>Minimum motion pixels</span>
+          <input id="minPixels" type="range" min="80" max="1200" value="260" />
+        </label>
+
+        <div class="calibration-panel">
+          <button id="calibrateBtn" type="button">Auto-Tune (20s)</button>
+          <span id="calibrationStatus">Calibration idle</span>
+        </div>
+
+        <label class="control person-mode-control">
+          <span>Person-only detection mode</span>
+          <div class="person-mode-row">
+            <input id="personMode" type="checkbox" />
+            <span id="personModelStatus">Model idle</span>
+          </div>
+        </label>
+
+        <label class="control">
+          <span>Theme</span>
+          <select id="themeSelect">
+            <option value="sunrise">Sunrise</option>
+            <option value="nightwatch">Nightwatch</option>
+            <option value="forest">Forest</option>
+            <option value="steel">Steel</option>
+          </select>
+        </label>
+
+        <div class="buttons">
+          <button id="startBtn" type="button">Start Camera</button>
+          <button id="stopBtn" type="button" disabled>Stop Camera</button>
+          <button id="muteBtn" type="button">Mute Sounds</button>
+        </div>
+
+        <div class="zone-builder">
+          <h3>Zone Alerts</h3>
+          <p>Draw a zone by dragging on the video, then name it and pick an alert.</p>
+
+          <label class="control">
+            <span>Zone name</span>
+            <input id="zoneName" type="text" maxlength="28" placeholder="Doorway" />
+          </label>
+
+          <label class="control">
+            <span>Zone alert sound</span>
+            <select id="zoneAlert">
+              <option value="alarm">Alarm</option>
+              <option value="chime">Chime</option>
+              <option value="pulse">Pulse</option>
+              <option value="bell">Bell</option>
+            </select>
+          </label>
+
+          <div class="buttons zone-buttons">
+            <button id="addZoneBtn" type="button">Add Drawn Zone</button>
+            <button id="clearZonesBtn" type="button">Clear Zones</button>
+          </div>
+
+          <div id="zonesList" class="zones-list">No zones yet.</div>
+        </div>
+
+        <div class="sound-pack-builder">
+          <h3>Custom Sound Packs</h3>
+          <p>Upload audio files and map each movement type to any sound file.</p>
+
+          <label class="control">
+            <span>Upload sounds</span>
+            <input id="soundPackInput" type="file" accept="audio/*" multiple />
+          </label>
+
+          <div class="buttons sound-pack-buttons">
+            <button id="clearSoundPackBtn" type="button">Remove Uploaded Sounds</button>
+          </div>
+
+          <div id="soundPackStatus" class="sound-pack-status">0 custom sounds loaded.</div>
+          <div id="soundMappingList" class="sound-mapping-list"></div>
+        </div>
+
+        <div class="cooldown-builder">
+          <h3>Alert Cooldown Rules</h3>
+          <p>Set cooldown in milliseconds for each movement type to reduce repeated alerts.</p>
+          <div id="cooldownRuleList" class="cooldown-rule-list"></div>
+        </div>
+
+        <ul class="legend">
+          <li><strong>Forward:</strong> rising tone</li>
+          <li><strong>Backward:</strong> alarm siren</li>
+          <li><strong>Left:</strong> low pulse</li>
+          <li><strong>Right:</strong> high pulse</li>
+          <li><strong>Up:</strong> bright ping</li>
+          <li><strong>Down:</strong> bass ping</li>
+        </ul>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
