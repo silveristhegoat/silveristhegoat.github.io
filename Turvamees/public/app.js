@@ -42,6 +42,7 @@ let rafId = null;
 let audioCtx = null;
 let muted = false;
 let lastSoundTimes = new Map();
+let activeCustomMovementAudio = null;
 let stableMovement = "waiting...";
 let pendingMovement = null;
 let pendingMovementFrames = 0;
@@ -107,6 +108,12 @@ stopBtn.addEventListener("click", stopCamera);
 muteBtn.addEventListener("click", () => {
   muted = !muted;
   muteBtn.textContent = muted ? "Unmute Sounds" : "Mute Sounds";
+
+  if (muted) {
+    stopActiveCustomMovementSound();
+  } else {
+    syncCustomMovementSound(stableMovement);
+  }
 });
 addZoneBtn.addEventListener("click", addDraftZone);
 clearZonesBtn.addEventListener("click", clearZones);
@@ -176,6 +183,8 @@ function handleSoundPackUpload(event) {
 }
 
 function clearUploadedSounds() {
+  stopActiveCustomMovementSound();
+
   for (const sound of uploadedSounds) {
     URL.revokeObjectURL(sound.url);
   }
@@ -233,6 +242,7 @@ function handleSoundMappingChange(event) {
   }
 
   movementSoundMap[movement] = event.target.value;
+  syncCustomMovementSound(stableMovement);
 }
 
 function renderCooldownRules() {
@@ -381,6 +391,7 @@ function stopCamera() {
   detectionFrameCounter = 0;
   lastPersonSeenAt = 0;
   lastSoundTimes.clear();
+  stopActiveCustomMovementSound();
   calibration.active = false;
   calibration.avgDeltaSamples = [];
   calibration.noisePixelSamples = [];
@@ -639,6 +650,7 @@ function classifyAndAct(motion, minMotionPixels) {
     if (now - lastMotionSeenAt > NO_MOTION_GRACE_MS) {
       const smoothedNoMotion = smoothMovement("no significant movement", now);
       setMovementLabel(smoothedNoMotion.movement);
+      syncCustomMovementSound(smoothedNoMotion.movement);
 
       if (smoothedNoMotion.changed) {
         previousMotion = null;
@@ -654,6 +666,7 @@ function classifyAndAct(motion, minMotionPixels) {
 
     if (!personMatch.allowed) {
       setMovementLabel("person not detected");
+      syncCustomMovementSound("person not detected");
       activeZoneLabel.textContent = "none";
       previousMotion = null;
       return;
@@ -687,9 +700,11 @@ function classifyAndAct(motion, minMotionPixels) {
 
   const smoothed = smoothMovement(movement, now);
   setMovementLabel(smoothed.movement);
+  syncCustomMovementSound(smoothed.movement);
 
   if (smoothed.changed && smoothed.movement !== "no significant movement") {
-    if (!canTriggerMovementAlert(smoothed.movement, now)) {
+    const hasCustomSound = hasCustomSoundMapping(smoothed.movement);
+    if (!hasCustomSound && !canTriggerMovementAlert(smoothed.movement, now)) {
       previousMotion = {
         centroidX: motion.centroidX,
         centroidY: motion.centroidY,
@@ -707,7 +722,9 @@ function classifyAndAct(motion, minMotionPixels) {
       areaRatio,
     });
 
-    playMovementSound(smoothed.movement);
+    if (!hasCustomSound) {
+      playMovementSound(smoothed.movement);
+    }
 
     if (activeZone) {
       playZoneAlert(activeZone, smoothed.movement);
@@ -1024,10 +1041,6 @@ function playMovementSound(movement) {
     return;
   }
 
-  if (playCustomMappedSound(movement)) {
-    return;
-  }
-
   if (!audioCtx) {
     audioCtx = new AudioContext();
   }
@@ -1088,6 +1101,78 @@ function playCustomMappedSound(movement) {
   });
 
   return true;
+}
+
+function hasCustomSoundMapping(movement) {
+  if (!MOVEMENT_TYPES.includes(movement)) {
+    return false;
+  }
+
+  const mappedSoundId = movementSoundMap[movement] || SYNTH_FALLBACK_ID;
+  if (mappedSoundId === SYNTH_FALLBACK_ID) {
+    return false;
+  }
+
+  return uploadedSounds.some((sound) => sound.id === mappedSoundId);
+}
+
+function stopActiveCustomMovementSound() {
+  if (!activeCustomMovementAudio) {
+    return;
+  }
+
+  activeCustomMovementAudio.audio.pause();
+  activeCustomMovementAudio.audio.currentTime = 0;
+  activeCustomMovementAudio = null;
+}
+
+function syncCustomMovementSound(movement) {
+  if (muted || !MOVEMENT_TYPES.includes(movement)) {
+    stopActiveCustomMovementSound();
+    return;
+  }
+
+  const mappedSoundId = movementSoundMap[movement] || SYNTH_FALLBACK_ID;
+  if (mappedSoundId === SYNTH_FALLBACK_ID) {
+    stopActiveCustomMovementSound();
+    return;
+  }
+
+  const sound = uploadedSounds.find((item) => item.id === mappedSoundId);
+  if (!sound) {
+    movementSoundMap[movement] = SYNTH_FALLBACK_ID;
+    stopActiveCustomMovementSound();
+    return;
+  }
+
+  if (
+    activeCustomMovementAudio &&
+    activeCustomMovementAudio.movement === movement &&
+    activeCustomMovementAudio.soundId === mappedSoundId &&
+    !activeCustomMovementAudio.audio.paused
+  ) {
+    return;
+  }
+
+  stopActiveCustomMovementSound();
+
+  const audio = new Audio(sound.url);
+  audio.volume = 0.95;
+  audio.loop = true;
+
+  activeCustomMovementAudio = {
+    movement,
+    soundId: mappedSoundId,
+    audio,
+  };
+
+  audio.play().catch((error) => {
+    if (activeCustomMovementAudio && activeCustomMovementAudio.audio === audio) {
+      activeCustomMovementAudio = null;
+    }
+
+    console.error("Could not play custom sound", error);
+  });
 }
 
 function playZoneAlert(zone, movement) {
@@ -1214,5 +1299,6 @@ window.addEventListener("beforeunload", () => {
     URL.revokeObjectURL(sound.url);
   }
 
+  stopActiveCustomMovementSound();
   stopCamera();
 });
