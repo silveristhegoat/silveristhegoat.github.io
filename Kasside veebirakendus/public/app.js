@@ -42,16 +42,17 @@ const shareCatButton = document.getElementById("shareCatButton");
 
 const FAVORITES_KEY = "catExplorerFavorites";
 const THEME_KEY = "catExplorerTheme";
+const CAT_API_BASE = "https://api.thecatapi.com/v1";
 const INITIAL_BATCH_SIZE = 12;
 const LOAD_MORE_BATCH_SIZE = 9;
 const MAX_COMPARE_SELECTION = 3;
 const THEMES = ["sunset", "ocean", "forest", "midnight"];
 const CAT_HOVER_SVGS = [
-  "/cat-svgs/browncat.svg",
-  "/cat-svgs/darkgraycat.svg",
-  "/cat-svgs/graycat.svg",
-  "/cat-svgs/tabbycat.svg",
-  "/cat-svgs/whitecat.svg"
+  "cat-svgs/browncat.svg",
+  "cat-svgs/darkgraycat.svg",
+  "cat-svgs/graycat.svg",
+  "cat-svgs/tabbycat.svg",
+  "cat-svgs/whitecat.svg"
 ];
 
 let allCats = [];
@@ -69,6 +70,7 @@ let quizScoreValue = 0;
 let quizTotalValue = 0;
 let activeModalCat = null;
 let dailyCat = null;
+let allBreedsCache = null;
 
 function shuffleArray(items) {
   const copy = [...items];
@@ -83,6 +85,42 @@ function getHoverSvgForCat(catId) {
   const safeId = String(catId || "cat");
   const seed = [...safeId].reduce((accumulator, char) => accumulator + char.charCodeAt(0), 0);
   return CAT_HOVER_SVGS[seed % CAT_HOVER_SVGS.length];
+}
+
+function mapBreedToCard(breed) {
+  const imageUrl = breed.image?.url
+    ? breed.image.url
+    : breed.reference_image_id
+      ? `https://cdn2.thecatapi.com/images/${breed.reference_image_id}.jpg`
+      : "https://cdn2.thecatapi.com/images/0XYvRd7oD.jpg";
+
+  return {
+    id: breed.id,
+    imageUrl,
+    name: breed.name || "Unknown Cat",
+    origin: breed.origin || "Unknown",
+    temperament: breed.temperament || "Not available",
+    lifeSpan: breed.life_span || "Not available",
+    description: breed.description || "No description available.",
+    intelligence: breed.intelligence ?? "Not available",
+    dogFriendly: breed.dog_friendly ?? "Not available",
+    childFriendly: breed.child_friendly ?? "Not available",
+    wikipediaUrl: breed.wikipedia_url || ""
+  };
+}
+
+async function fetchAllBreeds() {
+  if (Array.isArray(allBreedsCache) && allBreedsCache.length > 0) {
+    return allBreedsCache;
+  }
+
+  const response = await fetch(`${CAT_API_BASE}/breeds`);
+  if (!response.ok) {
+    throw new Error(`TheCatAPI returned status ${response.status}`);
+  }
+
+  allBreedsCache = await response.json();
+  return allBreedsCache;
 }
 
 function applyTheme(themeName, persist = true) {
@@ -244,13 +282,20 @@ function renderDailyCat() {
 
 async function loadDailyCat() {
   try {
-    const response = await fetch("/api/daily-cat");
-    if (!response.ok) {
-      throw new Error(`Server returned ${response.status}`);
-    }
+    const breeds = await fetchAllBreeds();
+    const pool = breeds.filter((breed) => breed.image?.url || breed.reference_image_id);
+    const dateKey = new Date().toISOString().slice(0, 10);
+    const daySeed = dateKey
+      .split("")
+      .reduce((accumulator, char) => accumulator + char.charCodeAt(0), 0);
+    const index = daySeed % pool.length;
 
-    const payload = await response.json();
-    dailyCat = payload?.cat ? payload : null;
+    dailyCat = pool.length > 0
+      ? {
+          date: dateKey,
+          cat: mapBreedToCard(pool[index])
+        }
+      : null;
   } catch (error) {
     console.error(error);
     dailyCat = null;
@@ -553,12 +598,12 @@ async function searchBreedsAcrossApi() {
   statusElement.textContent = "Searching all breeds...";
 
   try {
-    const response = await fetch(`/api/breeds/search?query=${encodeURIComponent(query)}&limit=30`);
-    if (!response.ok) {
-      throw new Error(`Server returned ${response.status}`);
-    }
+    const breeds = await fetchAllBreeds();
+    const results = breeds
+      .filter((breed) => String(breed.name || "").toLowerCase().includes(query.toLowerCase()))
+      .slice(0, 30)
+      .map(mapBreedToCard);
 
-    const results = await response.json();
     if (requestId !== activeSearchRequestId) {
       return;
     }
@@ -593,12 +638,11 @@ async function appendRandomCats(limit) {
   updateLoadMoreStatus();
 
   try {
-    const response = await fetch(`/api/cats?limit=${limit}`);
-    if (!response.ok) {
-      throw new Error(`Server returned ${response.status}`);
-    }
+    const breeds = await fetchAllBreeds();
+    const pool = breeds.filter((breed) => breed.image?.url || breed.reference_image_id);
+    const shuffled = shuffleArray(pool);
+    const cats = shuffled.slice(0, limit).map(mapBreedToCard);
 
-    const cats = await response.json();
     if (!Array.isArray(cats) || cats.length === 0) {
       return;
     }
