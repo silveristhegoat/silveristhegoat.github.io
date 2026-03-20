@@ -1,0 +1,19 @@
+{
+  "name": "cat-cards-app",
+  "version": "1.0.0",
+  "description": "Simple Node.js web app that displays cat cards from TheCatAPI",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "nodejs",
+    "express",
+    "cats",
+    "thecatapi"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
