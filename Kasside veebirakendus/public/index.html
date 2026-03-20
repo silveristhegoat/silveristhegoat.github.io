@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cat Cards Gallery</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Manrope:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-shape bg-shape-a"></div>
+    <div class="bg-shape bg-shape-b"></div>
+
+    <main class="page">
+      <header class="hero">
+        <p class="eyebrow">Node.js + External API</p>
+        <h1>Cat Explorer Cards</h1>
+        <p class="subtitle">
+          Discover random cats and breed facts loaded live from TheCatAPI.
+        </p>
+        <button id="reloadButton" class="reload-btn">Load New Cats</button>
+      </header>
+
+      <section class="controls" aria-label="Card controls">
+        <label class="control-field" for="themeSelect">
+          Theme
+          <select id="themeSelect">
+            <option value="sunset">Sunset</option>
+            <option value="ocean">Ocean</option>
+            <option value="forest">Forest</option>
+            <option value="midnight">Midnight</option>
+          </select>
+        </label>
+
+        <label class="control-field" for="searchInput">
+          Search
+          <input id="searchInput" type="text" placeholder="Find by breed name" />
+        </label>
+
+        <label class="control-field" for="originFilter">
+          Origin
+          <select id="originFilter">
+            <option value="all">All origins</option>
+          </select>
+        </label>
+
+        <label class="control-field" for="sortSelect">
+          Sort
+          <select id="sortSelect">
+            <option value="random">Random order</option>
+            <option value="name-asc">Name (A-Z)</option>
+            <option value="life-asc">Life span (shorter first)</option>
+            <option value="intelligence-desc">Intelligence (high to low)</option>
+          </select>
+        </label>
+
+        <button id="compareModeToggle" class="favorites-toggle" type="button">Compare Mode: Off</button>
+        <button id="favoritesToggle" class="favorites-toggle" type="button">Show Favorites Only: Off</button>
+      </section>
+
+      <section id="dailyCatPanel" class="daily-cat-panel" aria-live="polite">
+        <div class="daily-cat-top">
+          <h2 class="daily-cat-title">Daily Cat</h2>
+          <p id="dailyCatDate" class="daily-cat-date">Loading...</p>
+        </div>
+        <div class="daily-cat-body">
+          <img id="dailyCatImage" class="daily-cat-image" alt="Daily cat" />
+          <div class="daily-cat-info">
+            <h3 id="dailyCatName">Loading...</h3>
+            <p id="dailyCatDescription" class="daily-cat-description"></p>
+            <p class="meta"><strong>Origin:</strong> <span id="dailyCatOrigin">-</span></p>
+            <p class="meta"><strong>Life span:</strong> <span id="dailyCatLifeSpan">-</span></p>
+            <button id="dailyCatDetailsButton" class="favorites-toggle" type="button">View Details</button>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div id="status" class="status">Loading cats...</div>
+        <section id="quizPanel" class="quiz-panel" aria-live="polite">
+          <div class="quiz-top">
+            <h2 class="quiz-title">Mini Quiz: Guess the Breed</h2>
+            <p id="quizScore" class="quiz-score">Score: 0/0</p>
+          </div>
+          <p id="quizPrompt" class="quiz-prompt">Press Start Quiz to begin.</p>
+          <img id="quizImage" class="quiz-image hidden" alt="Quiz cat" />
+          <div id="quizOptions" class="quiz-options"></div>
+          <div class="quiz-actions">
+            <p id="quizFeedback" class="quiz-feedback"></p>
+            <button id="quizNextButton" class="favorites-toggle" type="button">Start Quiz</button>
+          </div>
+        </section>
+
+        <section id="comparePanel" class="compare-panel hidden" aria-live="polite">
+          <div class="compare-panel-top">
+            <p id="compareSummary" class="compare-summary">Select 2-3 cats to compare.</p>
+            <button id="clearCompareButton" class="favorites-toggle" type="button">Clear Compare</button>
+          </div>
+          <div id="compareCards" class="compare-cards"></div>
+        </section>
+        <div id="cards" class="cards" aria-live="polite"></div>
+        <p id="loadMoreStatus" class="load-more-status">Scroll down to load more cats.</p>
+        <div id="scrollSentinel" class="scroll-sentinel" aria-hidden="true"></div>
+      </section>
+    </main>
+
+    <div id="catModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-panel">
+        <button id="closeModalButton" class="modal-close" aria-label="Close details">Close</button>
+        <img id="modalImage" class="modal-image" alt="" />
+        <h2 id="modalTitle"></h2>
+        <p id="modalDescription" class="modal-description"></p>
+        <div class="modal-grid">
+          <p><strong>Origin:</strong> <span id="modalOrigin"></span></p>
+          <p><strong>Life span:</strong> <span id="modalLifeSpan"></span></p>
+          <p><strong>Temperament:</strong> <span id="modalTemperament"></span></p>
+          <p><strong>Intelligence:</strong> <span id="modalIntelligence"></span></p>
+          <p><strong>Dog friendly:</strong> <span id="modalDogFriendly"></span></p>
+          <p><strong>Child friendly:</strong> <span id="modalChildFriendly"></span></p>
+        </div>
+        <div class="modal-actions">
+          <button id="shareCatButton" class="favorites-toggle" type="button">Share This Cat</button>
+          <a id="modalWikiLink" class="modal-link hidden" href="#" target="_blank" rel="noreferrer">Read more on Wikipedia</a>
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>
