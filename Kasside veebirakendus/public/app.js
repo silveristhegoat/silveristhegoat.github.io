@@ -119,7 +119,12 @@ async function fetchAllBreeds() {
     throw new Error(`TheCatAPI returned status ${response.status}`);
   }
 
-  allBreedsCache = await response.json();
+  const payload = await response.json();
+  if (!Array.isArray(payload)) {
+    throw new Error("TheCatAPI returned an unexpected response format.");
+  }
+
+  allBreedsCache = payload;
   return allBreedsCache;
 }
 
@@ -655,7 +660,8 @@ async function appendRandomCats(limit) {
     renderFromState();
   } catch (error) {
     console.error(error);
-    loadMoreStatus.textContent = "Could not load more cats right now.";
+    loadMoreStatus.textContent = "Could not load cats from API right now.";
+    throw error;
   } finally {
     isLoadingCats = false;
     updateLoadMoreStatus();
@@ -771,10 +777,10 @@ async function loadCats() {
     await loadDailyCat();
     await appendRandomCats(INITIAL_BATCH_SIZE);
     if (allCats.length === 0) {
-      statusElement.textContent = "No cats were returned by the API.";
+      statusElement.textContent = "The API returned no cat breeds with images.";
     }
   } catch (error) {
-    statusElement.textContent = "Could not load cats. Please try again.";
+    statusElement.textContent = "Could not load cats from TheCatAPI. Please try again later.";
     console.error(error);
   } finally {
     reloadButton.disabled = false;
