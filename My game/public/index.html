@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Road Pulse: Thematic Driving Game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="sky-glow"></div>
+    <main class="layout">
+      <section class="panel panel-left">
+        <h1>Road Pulse</h1>
+        <p class="tagline">Thread traffic, dodge hazards, and surf your theme to the top score.</p>
+
+        <div class="theme-block">
+          <h2>Choose Theme</h2>
+          <div class="theme-options" id="themeOptions">
+            <button class="theme-btn active" data-theme="neon">Neon City</button>
+            <button class="theme-btn" data-theme="desert">Desert Storm</button>
+            <button class="theme-btn" data-theme="arctic">Arctic Night</button>
+          </div>
+        </div>
+
+        <div class="level-block">
+          <h2>Start Level</h2>
+          <select id="levelSelect" class="level-select" aria-label="Select start level">
+            <option value="1" selected>Level 1</option>
+            <option value="2">Level 2</option>
+            <option value="3">Level 3</option>
+            <option value="4">Level 4</option>
+            <option value="5">Level 5</option>
+          </select>
+        </div>
+
+        <div class="controls">
+          <h2>Controls</h2>
+          <p>Arrow Left / Arrow Right or A / D to steer</p>
+          <p>Tap on-screen buttons on mobile</p>
+        </div>
+
+        <div class="buttons">
+          <button id="startBtn" class="action action-primary">Start Run</button>
+          <button id="restartBtn" class="action" disabled>Restart</button>
+          <button id="pauseBtn" class="action">Pause</button>
+        </div>
+
+        <div id="postLevelActions" class="buttons post-level-actions hidden">
+          <button id="replayLevelBtn" class="action">Restart Level</button>
+          <button id="nextLevelBtn" class="action action-primary">Next Level</button>
+        </div>
+      </section>
+
+      <section class="panel game-panel">
+        <div class="hud">
+          <div class="hud-item"><span>Score</span><strong id="scoreValue">0</strong></div>
+          <div class="hud-item"><span>Level</span><strong id="levelValue">1</strong></div>
+          <div class="hud-item"><span>Target</span><strong id="targetValue">0</strong></div>
+          <div class="hud-item"><span>Speed</span><strong id="speedValue">0</strong></div>
+          <div class="hud-item"><span>Best</span><strong id="bestValue">0</strong></div>
+        </div>
+
+        <canvas id="gameCanvas" width="1600" height="900" aria-label="Driving game canvas"></canvas>
+
+        <div class="mobile-controls">
+          <button id="leftBtn" aria-label="Steer Left">Left</button>
+          <button id="boostBtn" aria-label="Boost">Boost</button>
+          <button id="rightBtn" aria-label="Steer Right">Right</button>
+        </div>
+      </section>
+    </main>
+
+    <script src="player.js"></script>
+    <script src="game.js"></script>
+  </body>
+</html>
