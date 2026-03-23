@@ -1,3 +1,21 @@
+// --- Screen Shake Effect ---
+function triggerScreenShake(duration = 500, intensity = 12) {
+  if (!canvas) return;
+  let frame = 0;
+  const original = canvas.style.transform;
+  function shake() {
+    if (frame++ < duration / 16) {
+      const dx = (Math.random() - 0.5) * intensity;
+      const dy = (Math.random() - 0.5) * intensity;
+      canvas.style.transform = `translate(${dx}px, ${dy}px)`;
+      requestAnimationFrame(shake);
+    } else {
+      canvas.style.transform = original;
+    }
+  }
+  shake();
+}
+
 // --- PAUSE LOGIC ---
 let paused = false;
 const pauseBtn = document.getElementById('pauseBtn');
@@ -744,6 +762,34 @@ function update(dt) {
     height: state.player.height * 0.8
   };
 
+  // --- CRASH IMMEDIATELY ON CONTACT, BUT ONLY IF OBSTACLE IS AT PLAYER OR BELOW ---
+  let crashed = false;
+  let crashObstacle = null;
+  for (let i = state.obstacles.length - 1; i >= 0; i -= 1) {
+    const obstacle = state.obstacles[i];
+    if (obstacle.y + obstacle.height / 2 >= state.player.y - state.player.height / 2) {
+      const isTruck = obstacle.type === 'truck';
+      const hitboxScale = isTruck ? 0.8 : 0.6;
+      const obstacleRect = {
+        x: obstacle.x,
+        y: obstacle.y,
+        width: obstacle.width * hitboxScale,
+        height: obstacle.height * hitboxScale
+      };
+      if (intersectsRect(playerRect, obstacleRect)) {
+        crashed = true;
+        crashObstacle = obstacle;
+        break;
+      }
+    }
+  }
+  if (crashed && crashObstacle) {
+    // Snap player position to just touching the obstacle
+    state.player.y = crashObstacle.y - (crashObstacle.height * (crashObstacle.type === 'truck' ? 0.8 : 0.6)) / 2 - state.player.height * 0.8 / 2;
+    gameOver();
+    return;
+  }
+  // Move obstacles only if not crashed
   for (let i = state.obstacles.length - 1; i >= 0; i -= 1) {
     const obstacle = state.obstacles[i];
     obstacle.y += state.speed * levelConfig.trafficSpeed * dt;
@@ -761,36 +807,20 @@ function update(dt) {
       continue;
     }
 
-    // Shrink obstacle hitbox: cars 60%, trucks 80%
-    const isTruck = obstacle.type === 'truck';
-    const hitboxScale = isTruck ? 0.8 : 0.6;
-    const obstacleRect = {
-      x: obstacle.x,
-      y: obstacle.y,
-      width: obstacle.width * hitboxScale,
-      height: obstacle.height * hitboxScale
-    };
-
-    if (intersectsRect(playerRect, obstacleRect)) {
-      gameOver();
-      return;
-    }
-  }
-
-  for (let i = state.pickups.length - 1; i >= 0; i -= 1) {
-    const pickup = state.pickups[i];
-    pickup.y += (state.speed - 30) * dt;
-
-    if (pickup.y > canvas.height + 40) {
-      state.pickups.splice(i, 1);
-      continue;
-    }
-
-    if (intersectsCircleRect(pickup, playerRect)) {
-      state.pickups.splice(i, 1);
-      state.score += 30;
-      state.levelScore += 30;
-      state.boostTimer = Math.min(4, state.boostTimer + 1.8);
+    // --- PICKUP COLLISION ---
+    for (let j = state.pickups.length - 1; j >= 0; j -= 1) {
+      const pickup = state.pickups[j];
+      if (intersectsCircleRect(pickup, playerRect)) {
+        state.pickups.splice(j, 1);
+        state.score += 30;
+        state.levelScore += 30;
+        state.boostTimer = Math.min(4, state.boostTimer + 1.8);
+      }
+      // Move pickup much slower than obstacles
+      pickup.y += 90 * dt;
+      if (pickup.y > canvas.height + 40) {
+        state.pickups.splice(j, 1);
+      }
     }
   }
 
@@ -1013,3 +1043,21 @@ levelSelect.value = String(state.selectedStartLevel);
 setTheme(state.theme);
 updateHud();
 requestAnimationFrame(loop);
+
+// Start the main game loop if not already running
+if (!window._roadPulseLoopStarted) {
+  window._roadPulseLoopStarted = true;
+  requestAnimationFrame(loop);
+}
+
+// Pause game when name prompt is shown, resume after
+window.pauseGameForName = function() {
+  if (!paused) {
+    paused = true;
+  }
+};
+window.resumeGameAfterName = function() {
+  if (paused) {
+    paused = false;
+  }
+};
