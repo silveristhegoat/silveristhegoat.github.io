@@ -1,0 +1,21 @@
+{
+  "name": "thematic-driving-game",
+  "version": "1.0.0",
+  "description": "A thematic interactive driving game built with Node.js and Canvas",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "nodejs",
+    "game",
+    "canvas",
+    "driving"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
