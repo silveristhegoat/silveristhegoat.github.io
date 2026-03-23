@@ -14,6 +14,7 @@
   // Insert modal into body
   function showNamePrompt() {
     if (document.getElementById('namePromptModal')) return;
+    if (typeof window.pauseGameForName === 'function') window.pauseGameForName();
     document.body.insertAdjacentHTML('beforeend', namePromptHtml);
     document.getElementById('saveNameBtn').onclick = saveName;
     document.getElementById('playerNameInput').onkeydown = function(e) {
@@ -24,6 +25,7 @@
   function hideNamePrompt() {
     const modal = document.getElementById('namePromptModal');
     if (modal) modal.remove();
+    if (typeof window.resumeGameAfterName === 'function') window.resumeGameAfterName();
   }
 
   function saveName() {
@@ -79,26 +81,59 @@
     }
   }
 
-  // Expose for game.js
-  window.saveProgress = saveProgress;
-  window.loadProgress = loadProgress;
+  // --- RECORDS LOGIC ---
+  function saveRecord(score) {
+    if (!window.playerName) return;
+    let records = JSON.parse(localStorage.getItem('roadPulseRecords') || '{}');
+    if (!records[window.playerName] || score > records[window.playerName]) {
+      records[window.playerName] = score;
+      localStorage.setItem('roadPulseRecords', JSON.stringify(records));
+    }
+  }
+
+  function getRecords() {
+    return JSON.parse(localStorage.getItem('roadPulseRecords') || '{}');
+  }
+
+  // Show records in UI (below player name)
+  function showRecords() {
+    let el = document.getElementById('playerRecordsDisplay');
+    if (!el) {
+      const nameEl = document.getElementById('playerNameDisplay');
+      el = document.createElement('div');
+      el.id = 'playerRecordsDisplay';
+      el.style.fontSize = '1.05rem';
+      el.style.color = '#ffd166';
+      el.style.marginBottom = '10px';
+      nameEl.insertAdjacentElement('afterend', el);
+    }
+    const records = getRecords();
+    let html = '<b>Records:</b><br>';
+    for (const [name, score] of Object.entries(records)) {
+      html += `${name}: ${score}<br>`;
+    }
+    el.innerHTML = html;
+  }
+
+  // Save record on progress save
+  const origSaveProgress = saveProgress;
+  function saveProgressWithRecord() {
+    origSaveProgress();
+    saveRecord(window.state?.best || 0);
+    showRecords();
+  }
+  window.saveProgress = saveProgressWithRecord;
 
   // On load
   window.addEventListener('DOMContentLoaded', function() {
-    let name = localStorage.getItem('roadPulsePlayerName');
-    if (!name) {
-      showNamePrompt();
-    } else {
-      window.playerName = name;
-      updateNameDisplay();
-      loadProgress();
-      // Set level select dropdown to last completed level if available
-      if (window.state && window.state.selectedStartLevel) {
-        const levelSelect = document.getElementById('levelSelect');
-        if (levelSelect) {
-          levelSelect.value = String(window.state.selectedStartLevel);
-        }
-      }
-    }
+    // Remove any cached player name
+    localStorage.removeItem('roadPulsePlayerName');
+    showNamePrompt();
+    showRecords();
+  });
+
+  // Save progress on tab close or reload
+  window.addEventListener('beforeunload', function() {
+    if (window.saveProgress) window.saveProgress();
   });
 })();
