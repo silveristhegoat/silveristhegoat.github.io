@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photo Music Generator</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1 class="title">Photo Music Generator</h1>
+      <p class="tagline">Turn your images into sound — upload a photo and hear a unique composition.</p>
+    </div>
+  </header>
+
+  <main class="container main-grid">
+    <section class="card upload-area">
+      <h2>Upload an Image</h2>
+      <p class="muted">Choose any photo and the app will analyze colors and objects to create music.</p>
+      <form id="upload-form" enctype="multipart/form-data">
+        <label for="preset">Style</label>
+        <select id="preset" name="preset">
+          <option value="ambient">Ambient</option>
+          <option value="lofi">Lo-fi</option>
+          <option value="synthwave">Synthwave</option>
+          <option value="orchestral">Orchestral</option>
+        </select>
+        <label style="margin-left:8px; font-weight:600; color:var(--muted);">
+          <input type="checkbox" id="multi-image" style="margin-right:6px" /> Multi-image mode
+        </label>
+        <input type="file" id="photo" name="photo" accept="image/*" required />
+        <div class="actions">
+          <button type="submit" class="primary">Upload & Generate</button>
+        </div>
+      </form>
+      <div id="music-player" class="player-placeholder">No music playing yet.</div>
+    </section>
+
+    <aside class="card gallery">
+      <h3>Recent Uploads</h3>
+      <div id="gallery-grid" class="grid">
+        <div class="empty">No uploads yet — upload an image to see it here.</div>
+      </div>
+    </aside>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <small>Built with TensorFlow.js and Tone.js — demo project</small>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.0.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tone@14.8.39/build/Tone.min.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
