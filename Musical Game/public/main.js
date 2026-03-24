@@ -1,5 +1,7 @@
+// Placeholder for the loaded COCO-SSD model (object detection)
 let cocoModel = null;
-// Global session state
+
+// Global session state object tracking active tracks, effects, recorder, and visualizer
 let currentSession = null;
 
 // Preset definitions: tweak mapping, tempo and density multipliers, and effects
@@ -30,6 +32,7 @@ const PRESETS = {
   }
 };
 
+// Load the TensorFlow COCO-SSD model asynchronously (cached in `cocoModel`).
 async function loadModel() {
   if (window.cocoSsd && !cocoModel) {
     try {
@@ -40,6 +43,7 @@ async function loadModel() {
   }
 }
 
+// Draw an image onto a canvas and return its ImageData for pixel analysis.
 function getImageData(img) {
   const c = document.createElement('canvas');
   c.width = img.naturalWidth || img.width;
@@ -49,6 +53,7 @@ function getImageData(img) {
   return ctx.getImageData(0, 0, c.width, c.height);
 }
 
+// Compute the average RGB color across an ImageData object.
 function averageColor(imageData) {
   const d = imageData.data;
   let r = 0, g = 0, b = 0, count = 0;
@@ -58,6 +63,7 @@ function averageColor(imageData) {
   return { r: Math.round(r / count), g: Math.round(g / count), b: Math.round(b / count) };
 }
 
+// Convert RGB to a hue angle (0..360). Useful to map color hue to musical scales.
 function rgbToHue(r,g,b) {
   r /= 255; g /= 255; b /= 255;
   const max = Math.max(r,g,b), min = Math.min(r,g,b);
@@ -69,6 +75,7 @@ function rgbToHue(r,g,b) {
   return Math.round(h);
 }
 
+// Run object detection on an image using the COCO model. Returns an array of predictions.
 async function detectObjects(img) {
   if (!cocoModel) await loadModel();
   if (!cocoModel) return [];
@@ -80,6 +87,8 @@ async function detectObjects(img) {
   }
 }
 
+// Map average color + object predictions to musical parameters used for track creation.
+// Returns tempo, synthName, density, brightness, hue and objectSeeds.
 function mapToMusicParams(avgColor, predictions) {
   const brightness = (avgColor.r + avgColor.g + avgColor.b) / (3 * 255); // 0..1
   const hue = rgbToHue(avgColor.r, avgColor.g, avgColor.b);
@@ -101,6 +110,7 @@ function mapToMusicParams(avgColor, predictions) {
   return { tempo, synthName, density, brightness, hue, objectSeeds };
 }
 
+// Apply a named preset (tempo/density multipliers, etc.) to a params object.
 function applyPresetToParams(params, presetName) {
   const preset = PRESETS[presetName] || PRESETS.ambient;
   return Object.assign({}, params, {
@@ -111,6 +121,7 @@ function applyPresetToParams(params, presetName) {
 }
 
 // Choose a preset based on detected objects and image brightness/hue
+// Choose a preset name automatically based on detected object classes and image brightness.
 function choosePresetForImage(predictions, avgColor) {
   const classes = (predictions || []).map(p => (p.class || '').toLowerCase());
   const has = (list) => classes.some(c => list.includes(c));
@@ -125,6 +136,7 @@ function choosePresetForImage(predictions, avgColor) {
   return 'ambient';
 }
 
+// Map a single detected object class (and image color) into musical params for a track.
 function mapObjectToParams(avgColor, objectClass) {
   const brightness = (avgColor.r + avgColor.g + avgColor.b) / (3 * 255);
   const hue = rgbToHue(avgColor.r, avgColor.g, avgColor.b);
@@ -145,7 +157,8 @@ function mapObjectToParams(avgColor, objectClass) {
   return { tempo, synthName, density, brightness, hue, objectSeeds: [objectClass] };
 }
 
-// Generate melodic/rhythmic pattern based on object type and params
+// Generate a melodic/rhythmic pattern based on object type and params.
+// Returns an object with `pattern` (array of note names or null for rests) and `subdivision`.
 function generatePattern(params) {
   const hue = params.hue || 180;
   const major = ['C4','D4','E4','F4','G4','A4','B4'];
@@ -192,6 +205,7 @@ function generatePattern(params) {
   return { pattern: seq, subdivision };
 }
 
+// Create a track object from params: construct synth, gain/pan/filter, and a sequenced pattern.
 function createTrack(params, name) {
   let synth;
   switch (params.synthName) {
@@ -202,6 +216,7 @@ function createTrack(params, name) {
     case 'AMSynth': synth = new Tone.AMSynth(); break;
     default: synth = new Tone.Synth({ oscillator: { type: 'sine' } });
   }
+  // Per-track routing nodes: gain (volume), pan (stereo), and a filter shaped by hue.
   const gain = new Tone.Gain(0.8);
   const pan = new Tone.Panner(0);
   const filter = new Tone.Filter(800 + params.hue * 2, 'lowpass');
@@ -225,6 +240,7 @@ function createTrack(params, name) {
   return { name: name || params.objectSeeds.join('-') || 'track', params, synth, gain, pan, filter, seq, pattern: seqNotes, muted: false };
 }
 
+// Create a multi-track session: build master chain, effects, per-track synths and analysers.
 function createMultiSession(trackParams, presetName) {
   if (currentSession) disposeSession();
   Tone.Transport.cancel();
@@ -283,6 +299,7 @@ function createMultiSession(trackParams, presetName) {
   return currentSession;
 }
 
+  // Dispose and clean up the current audio session, stopping transport and freeing nodes.
   function disposeSession() {
     if (!currentSession) return;
     try {
@@ -316,6 +333,7 @@ function createMultiSession(trackParams, presetName) {
     currentSession = null;
   }
 
+  // Clear the UI and fully dispose the active session.
   function clearSession() {
     try {
       stopSession();
@@ -330,6 +348,7 @@ function createMultiSession(trackParams, presetName) {
     } catch (e) { console.warn('clearSession error', e); }
   }
 
+// Start playback for the current session: start Tone and sequences, and Transport.
 async function startSession() {
   if (!currentSession) return;
   if (currentSession.playing) return;
@@ -339,6 +358,7 @@ async function startSession() {
   currentSession.playing = true;
 }
 
+// Stop playback but keep nodes alive so the session can be restarted quickly.
 function stopSession() {
   if (!currentSession) return;
   try {
@@ -357,6 +377,7 @@ function stopSession() {
   if (currentSession) currentSession.playing = false;
 }
 
+// Create and run the visualizer loop that draws waveform, FFT bars, and per-track meters.
 function startVisualizerLoop(session) {
   const canvasId = 'master-visualizer-canvas';
   let canvas = document.getElementById(canvasId);
@@ -422,6 +443,7 @@ function startVisualizerLoop(session) {
   draw();
 }
 
+// Handle the upload form: send file to server, show thumbnail, analyze image, and build audio session.
 document.getElementById('upload-form').addEventListener('submit', async function(e) {
   e.preventDefault();
   const formData = new FormData();
