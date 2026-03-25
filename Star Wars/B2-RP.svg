@@ -1,0 +1,26 @@
+<svg width="370" height="551" viewBox="0 0 370 551" fill="none" xmlns="http://www.w3.org/2000/svg">
+<ellipse cx="13.5" cy="37" rx="13.5" ry="37" transform="matrix(-1 0 0 1 325 108)" fill="black"/>
+<ellipse cx="58.5" cy="138" rx="13.5" ry="37" fill="black"/>
+<ellipse cx="185" cy="358" rx="49" ry="44" fill="#464340"/>
+<circle cx="185" cy="154" r="125.5" fill="#C6C8C9" stroke="black"/>
+<ellipse cx="29.5" cy="131.5" rx="29.5" ry="61.5" fill="#C6C8C9"/>
+<ellipse cx="29.5" cy="239.5" rx="29.5" ry="61.5" fill="#585B5C"/>
+<path d="M185 195L252.55 48.75H117.45L185 195Z" fill="#35322B"/>
+<path d="M185.495 25C210.006 25 233.027 33.7146 252.991 49H118C137.964 33.7147 160.985 25.0001 185.495 25Z" fill="#35322B"/>
+<path d="M222.5 109.5C229.167 109.5 234.5 114.463 234.5 120.5C234.5 126.537 229.167 131.5 222.5 131.5C215.833 131.5 210.5 126.537 210.5 120.5C210.5 114.463 215.833 109.5 222.5 109.5Z" fill="#FF2121" stroke="black"/>
+<path d="M58.959 128C58.9859 129.076 59 130.16 59 131.25C59 165.216 45.7924 192.75 29.5 192.75C13.2076 192.75 0 165.216 0 131.25C0 130.16 0.0141367 129.076 0.0410156 128H58.959Z" fill="#363B3E"/>
+<ellipse cx="29.5" cy="61.5" rx="29.5" ry="61.5" transform="matrix(-1 0 0 1 370 77)" fill="#C6C8C9"/>
+<ellipse cx="29.5" cy="61.5" rx="29.5" ry="61.5" transform="matrix(-1 0 0 1 370 185)" fill="#585B5C"/>
+<ellipse cx="28.5" cy="61.5" rx="28.5" ry="61.5" transform="matrix(-1 0 0 1 273 340)" fill="#C6C8C9"/>
+<ellipse cx="28.5" cy="61.5" rx="28.5" ry="61.5" transform="matrix(-1 0 0 1 151 340)" fill="#C6C8C9"/>
+<path d="M311.041 135C311.014 136.076 311 137.16 311 138.25C311 172.216 324.208 199.75 340.5 199.75C356.792 199.75 370 172.216 370 138.25C370 137.16 369.986 136.076 369.959 135H311.041Z" fill="#363B3E"/>
+<ellipse cx="184.5" cy="295.5" rx="61.5" ry="62.5" fill="#464340"/>
+<ellipse cx="246" cy="370.5" rx="19" ry="19.5" fill="black"/>
+<ellipse cx="121" cy="370.5" rx="19" ry="19.5" fill="black"/>
+<rect x="107" y="451" width="27" height="73" fill="#201E1E"/>
+<rect x="144" y="523" width="27" height="50" transform="rotate(90 144 523)" fill="#201E1E"/>
+<rect width="46" height="50" transform="matrix(0 -1 -1 0 53 337)" fill="#999999"/>
+<rect width="46" height="50" transform="matrix(0 -1 -1 0 366 340)" fill="#999999"/>
+<rect x="274" y="524" width="27" height="50" transform="rotate(90 274 524)" fill="#201E1E"/>
+<rect x="235" y="451" width="27" height="73" fill="#201E1E"/>
+</svg>

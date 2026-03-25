@@ -1,0 +1,29 @@
+<svg width="210" height="383" viewBox="0 0 210 383" fill="none" xmlns="http://www.w3.org/2000/svg">
+<ellipse cx="28.1531" cy="267.589" rx="107.5" ry="21.7102" transform="rotate(-89.7638 28.1531 267.589)" fill="#EBEBEB"/>
+<ellipse cx="182.153" cy="267.589" rx="107.5" ry="21.7102" transform="rotate(-89.7638 182.153 267.589)" fill="#EBEBEB"/>
+<rect y="363" width="56" height="20" fill="#EBEBEB"/>
+<rect x="154" y="363" width="56" height="20" fill="#EBEBEB"/>
+<rect x="38" y="120" width="135" height="211" rx="7" fill="#EBEBEB"/>
+<rect x="93" width="26" height="120" fill="#323234"/>
+<rect x="45" y="113" width="121" height="11" fill="#2E2E2E"/>
+<ellipse cx="90.5" cy="315" rx="15.5" ry="16" fill="black"/>
+<ellipse cx="90.5" cy="252" rx="10.5" ry="16" fill="black"/>
+<ellipse cx="90.5" cy="210" rx="10.5" ry="16" fill="black"/>
+<ellipse cx="90.5" cy="315" rx="15.5" ry="16" fill="black"/>
+<rect x="114" y="284" width="46" height="15" fill="black"/>
+<rect x="38" y="124" width="135" height="4" fill="black"/>
+<rect x="38" y="131" width="135" height="4" fill="black"/>
+<rect x="57" y="142" width="84" height="13" fill="black"/>
+<rect x="57" y="162" width="84" height="13" fill="black"/>
+<rect x="6" y="252" width="37" height="13" rx="2" fill="#7E7C7C"/>
+<rect x="167" y="252" width="37" height="13" rx="2" fill="#7E7C7C"/>
+<rect x="135" y="305" width="26" height="21" transform="rotate(90 135 305)" fill="black"/>
+<rect x="160" y="305" width="26" height="10" transform="rotate(90 160 305)" fill="black"/>
+<path d="M125 119.84C121.134 119.84 118 116.706 118 112.84L118 0L169.253 119.84H125Z" fill="#323234"/>
+<path d="M125 119.84C121.134 119.84 118 116.706 118 112.84L118 0L169.253 119.84H125Z" fill="#323234"/>
+<path d="M86.2529 119.84C90.1189 119.84 93.2529 116.706 93.2529 112.84L93.2529 0L42 119.84H86.2529Z" fill="#323234"/>
+<rect x="78" y="74" width="26" height="40" fill="#AB3F3D"/>
+<rect x="69" y="55" width="73" height="9" fill="#AB3F3D"/>
+<path d="M141.5 55L145.397 64H137.603L141.5 55Z" fill="#AB3F3D"/>
+<path d="M69.5 55L73.3971 64H65.6029L69.5 55Z" fill="#AB3F3D"/>
+</svg>

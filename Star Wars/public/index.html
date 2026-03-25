@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Star Wars Cards</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Star Wars Databank</h1>
+  <p class="site-desc">Explore entries from the Star Wars Databank — characters, droids, locations, species and vehicles. Click any card to view full details in a modal.</p>
+  <div class="controls"></div>
+  <div id="categories"></div>
+  <div id="modal" class="modal" aria-hidden="true">
+    <div class="modal-backdrop" onclick="closeModal()"></div>
+    <div class="modal-content" role="dialog" aria-modal="true">
+      <button class="modal-close" aria-label="Close" onclick="closeModal()">×</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
