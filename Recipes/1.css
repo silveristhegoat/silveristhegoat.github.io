@@ -4,7 +4,7 @@
     background-color:red;
     border:2px solid black;
     margin: auto;
-    background-image: url('header.jpg');
+    background-image: url('header.webp');
     background-size: cover;
 }
 #content{
@@ -65,7 +65,7 @@
     margin-top:160px;
     position:absolute;
     background-color:yellow;
-    background-image: url('rice.jpg');
+    background-image: url('rice.jfif');
     background-size: cover;
 }
 ul, ol {
