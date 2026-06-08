@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Deadlock</title>
+</head>
+<body>
+    <header id="header">
+    <h1 id="title">DEADLOCK</h1>
+    <div id="button">
+    <a href="index.html" class="buttons">Home</a>
+    <a href="heroes.html" class="buttons">Heroes</a>
+    <a href="mechanics.html" class="buttons">Mechanics</a>
+    <a href="patchnotes.html" class="buttons">Patch Notes</a>
+        </div>
+    </header>
+    <div id="body1">
+        <div id="logo"></div>
+        <p id="paragraph">Deadlock is an up and coming 6v6 game developed by Valve Corporation, combining two of the best game genres - MOBA and FPS. It is set in an alternate urban fantasy New York somewhere in the 20th century. The heroes take part in an occult ritual, where they have to kill their teams opposing god (Patron) to summon their own Patron and win the game. The game is currently in early development, with it being invite only since 2024.</p>
+        <div id="dlimage" class="header-slider">
+            <div class="header-slide-a" aria-hidden="false"></div>
+            <div class="header-slide-b" aria-hidden="true"></div>
+            <div class="header-dots" aria-hidden="false"></div>
+        </div>
+    </div>
+     <video autoplay muted loop id="video">
+    <source src="doorman.mp4" type="video/mp4">
+    </video>
+    <section id="quiz" class="quiz-container" aria-live="polite">
+        <h2 class="sr-only">Deadlock quiz</h2>
+        <div class="score" id="score" hidden>Score: <span id="score-value">0</span>/<span id="total">0</span></div>
+        <div class="question" id="question">Question will appear here</div>
+        <div class="answers" id="answers"></div>
+        <div class="controls">
+            <button id="next" class="next-btn">Next</button>
+            <button id="restart" class="restart-btn" hidden>Restart</button>
+        </div>
+    </section>
+    <script src="quiz.js"></script>
+    <div id="footer">
+    <p id="footertext">Copyright 2026 Valve Corporation. All rights reserved.</p>
+    </div>
+    <script>
+        const headerImages=['dl1.jpg','dl2.jpg','dl3.jpg'];
+        const headerLayers=[document.querySelector('.header-slide-a'),document.querySelector('.header-slide-b')];
+        const dotsContainer=document.querySelector('.header-dots');
+        let currentHeaderIndex=0;
+        let rotationTimer=null;
+        let visibleLayerIndex=0;
+        function setActiveHeader(index){
+            currentHeaderIndex=index;
+            const nextLayerIndex=visibleLayerIndex===0?1:0;
+            const currentLayer=headerLayers[visibleLayerIndex];
+            const nextLayer=headerLayers[nextLayerIndex];
+            nextLayer.style.backgroundImage='url("'+headerImages[index]+'")';
+            nextLayer.classList.add('is-visible');
+            currentLayer.classList.remove('is-visible');
+            visibleLayerIndex=nextLayerIndex;
+            dotsContainer.querySelectorAll('.header-dot').forEach((dot,dotIndex)=>{
+                dot.classList.toggle('active',dotIndex===index);
+                dot.setAttribute('aria-pressed',String(dotIndex===index));
+            });
+        }
+        function startRotation(){
+            if(rotationTimer){clearInterval(rotationTimer);}
+            rotationTimer=setInterval(()=>{
+                setActiveHeader((currentHeaderIndex+1)%headerImages.length);
+            },5000);
+        }
+        function buildDots(){
+            dotsContainer.innerHTML='';
+            headerImages.forEach((_,index)=>{
+                const dotButton=document.createElement('button');
+                dotButton.type='button';
+                dotButton.className='header-dot';
+                dotButton.setAttribute('aria-label','Show header image '+(index+1));
+                dotButton.setAttribute('aria-pressed','false');
+                dotButton.addEventListener('click',()=>{setActiveHeader(index);startRotation();});
+                dotsContainer.appendChild(dotButton);
+            });
+        }
+        buildDots();
+        headerLayers[0].style.backgroundImage='url("'+headerImages[0]+'")';
+        headerLayers[0].classList.add('is-visible');
+        headerLayers[1].style.backgroundImage='url("'+headerImages[1]+'")';
+        setActiveHeader(0);
+        startRotation();
+    </script>
+</body>
+</html>
